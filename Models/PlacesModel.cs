@@ -23,7 +23,7 @@ namespace Vacation24.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int OwnerId { get; set; }
+        public string OwnerId { get; set; }
 
         public string Name { get; set; }
         public decimal MinimumPrice { get; set; }

@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vacation24.Core.Payment;
 using Vacation24.Models;
-using Vacation24.Models.DTO;
 
 namespace Vacation24.Controllers
 {
     public class AdminController : Controller
     {
-        private IPaymentServices _services;
-        private DefaultContext _context = DefaultContext.GetContext();
+        private readonly IPaymentServices paymentServices;
+        private readonly DefaultContext dbContext;
 
-        public AdminController(IPaymentServices services)
+        public AdminController(
+            IPaymentServices paymentServices,
+            DefaultContext dbContext
+        )
         {
-            _services = services;
+            this.paymentServices = paymentServices;
+            this.dbContext = dbContext;
         }
 
         [Authorize(Roles="admin")]
@@ -27,15 +30,15 @@ namespace Vacation24.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public ActionResult ShowUserObjects(int id)
+        public ActionResult ShowUserObjects(string id)
         {
-            var profile = _context.Profiles.Where(p => p.UserId == id).FirstOrDefault();
+            var profile = dbContext.Profiles.Where(p => p.Id == id).FirstOrDefault();
             if (profile == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var count = (decimal)_context.Places.Where(p => p.OwnerId == id).Count();   
+            var count = (decimal)dbContext.Places.Where(p => p.OwnerId == id).Count();   
 
             ViewBag.Count = Math.Ceiling(count / 4);
             ViewBag.Profile = profile;
