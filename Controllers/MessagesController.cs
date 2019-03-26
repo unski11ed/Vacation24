@@ -2,44 +2,55 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vacation24.Core;
+using Vacation24.Core.Configuration;
 using Vacation24.Core.Mailer.Concrete;
 using Vacation24.Models;
-using Vacation24.Models.DTO;
-using WebMatrix.WebData;
 
 namespace Vacation24.Controllers
 {
     public class MessagesController : CustomController
     {
-        private DefaultContext _dbContext = new DefaultContext();
-        private IContactFormMail _contactFormMail;
-        private IContactFormMailConfirmation _contactFormMailConfirmation;
+        private readonly IContactFormMail contactFormMail;
+        private readonly IContactFormMailConfirmation contactFormMailConfirmation;
+        private readonly DefaultContext dbContext;
 
-        public MessagesController(IContactFormMail contactFormMail, IContactFormMailConfirmation contatFormMailConfirmation)
+        public MessagesController(
+            IContactFormMail contactFormMail,
+            IContactFormMailConfirmation contatFormMailConfirmation,
+            DefaultContext dbContext
+        )
         {
-            _contactFormMail = contactFormMail;
-            _contactFormMailConfirmation = contatFormMailConfirmation;
+            this.contactFormMail = contactFormMail;
+            this.contactFormMailConfirmation = contatFormMailConfirmation;
+            this.dbContext = dbContext;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public ActionResult Send(ContactMessage message)
         {
-            var ownerId = _dbContext.Places.Find(message.ObjectId).OwnerId;
-            var ownerUser = _dbContext.Profiles.Where(p => p.UserId == ownerId).First();
+            var ownerId = dbContext.Places.Find(message.ObjectId).OwnerId;
+            var ownerUser = dbContext.Profiles.Find(ownerId);
 
-            _contactFormMail.Email = message.Email;
-            _contactFormMailConfirmation.Email = ownerUser.Email;
+            contactFormMail.Email = message.Email;
+            contactFormMailConfirmation.Email = ownerUser.Email;
 
-            _contactFormMailConfirmation.Subject = _contactFormMail.Subject = message.Subject;
-            _contactFormMailConfirmation.Content = _contactFormMail.Content = message.Content.Replace("\r\n", "<br />");
+            contactFormMailConfirmation.Subject = contactFormMail.Subject = message.Subject;
+            contactFormMailConfirmation.Content = contactFormMail.Content = message.Content.Replace("\r\n", "<br />");
 
-            _contactFormMail.Send(ownerUser.Email);
-            _contactFormMailConfirmation.Send(message.Email);
+            contactFormMail.Send(ownerUser.Email);
+            contactFormMailConfirmation.Send(message.Email);
 
-            return Json(new ResultViewModel() { Status = (int)ResultStatus.Success, Message = "Pomyślnie wysłano wiadomość na adres Email własciciela." });
+            return Json(
+                new ResultViewModel()
+                    {
+                        Status = (int)ResultStatus.Success,
+                        Message = "Successfully sent a message to owners Email address."
+                    }
+            );
         }
     }
 }
