@@ -3,26 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Security;
 using Vacation24.Models;
-using WebMatrix.WebData;
-using PagedList;
-using PagedList.Mvc;
 using Vacation24.Core;
+using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vacation24.Controllers
 {
     public class NewsController : CustomController
     {
-        private DefaultContext _dbContext = new DefaultContext();
         private const int TOTAL_LIST_ENTRIES = 20;
+        private readonly DefaultContext dbContext;
+        private readonly CurrentUserProvider currentUserProvider;
+
+        public NewsController(
+            DefaultContext dbContext,
+            CurrentUserProvider currentUserProvider
+        )
+        {
+            this.dbContext = dbContext;
+            this.currentUserProvider = currentUserProvider;
+        }
 
         public ActionResult NewsBox(int count = 3)
         {
-            //TODO: Write
-            ViewBag.News = _dbContext.News.OrderByDescending(n => n.Created)
-                                          .Take(count)
-                                          .ToList();
+            ViewBag.News = dbContext.News
+                .OrderByDescending(n => n.Created)
+                .Take(count)
+                .ToList();
 
             return View();
         }
@@ -30,15 +39,20 @@ namespace Vacation24.Controllers
         [HttpGet]
         public ActionResult Index(int page = 1, string search = null)
         {
-            ViewBag.IsEditable = WebSecurity.IsAuthenticated && Roles.IsUserInRole("admin");
+            ViewBag.IsEditable = (
+                currentUserProvider.IsAuthenticated &&
+                currentUserProvider.IsUserInRole("admin")
+            );
 
             if (search != null && search.Length > 3)
-                ViewBag.List = _dbContext.News.Where(n => n.Title.Contains(search) || n.Content.Contains(search))
-                                              .OrderByDescending(n => n.Created)
-                                              .ToPagedList(page, TOTAL_LIST_ENTRIES);
+                ViewBag.List = dbContext.News
+                    .Where(n => n.Title.Contains(search) || n.Content.Contains(search))
+                    .OrderByDescending(n => n.Created)
+                    .ToPagedList(page, TOTAL_LIST_ENTRIES);
             else
-                ViewBag.List = _dbContext.News.OrderByDescending(n => n.Created)
-                                              .ToPagedList(page, TOTAL_LIST_ENTRIES);
+                ViewBag.List = dbContext.News
+                    .OrderByDescending(n => n.Created)
+                    .ToPagedList(page, TOTAL_LIST_ENTRIES);
 
             return View();
         }
@@ -51,21 +65,19 @@ namespace Vacation24.Controllers
         }
     
         [HttpPost]
-        [ValidateInput(false)]
         [Authorize(Roles = "admin")]
         public ActionResult Create(NewsViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var profile = _dbContext.Profiles.Where(p => p.UserId == WebSecurity.CurrentUserId).First();
+                var profile = dbContext.Profiles.Find(currentUserProvider.UserId);
 
-                var news = (News)model;
+                News news = model;
                 news.Created = news.Updated = DateTime.Now;
                 news.ProfileId = profile.Id; ;
 
-                _dbContext.News.Add(news);
-
-                _dbContext.SaveChanges();
+                dbContext.News.Add(news);
+                dbContext.SaveChanges();
 
                 return Redirect("/News/Index");
             }
@@ -74,32 +86,30 @@ namespace Vacation24.Controllers
         }
 
         [HttpGet]
-        [ValidateInput(false)]
         [Authorize(Roles = "admin")]
         public ActionResult Edit(int id)
         {
-            var news = _dbContext.News.Find(id);
+            var news = dbContext.News.Find(id);
 
             if (news == null)
-                return HttpNotFound();
+                return NotFound();
 
             return View(news);
         }
 
         [HttpPost]
-        [ValidateInput(false)]
         [Authorize(Roles = "admin")]
         public ActionResult Edit(NewsViewModel model)
         {
-            var dbEntry = _dbContext.News.Find(model.Id);
+            var dbEntry = dbContext.News.Find(model.Id);
 
             if (dbEntry == null)
                 throw new Exception("Unknown entry requested.");
 
             dbEntry.Extend(model);
 
-            _dbContext.Entry<News>(dbEntry).State = System.Data.Entity.EntityState.Modified;
-            _dbContext.SaveChanges();
+            dbContext.Entry<News>(dbEntry).State = EntityState.Modified;
+            dbContext.SaveChanges();
 
             return View(dbEntry);
         }
@@ -108,22 +118,22 @@ namespace Vacation24.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id)
         {
-            var entry = _dbContext.News.Find(id);
+            var entry = dbContext.News.Find(id);
 
             if (entry == null)
-                return HttpNotFound();
+                return NotFound();
 
-            _dbContext.News.Remove(entry);
-            _dbContext.SaveChanges();
+            dbContext.News.Remove(entry);
+            dbContext.SaveChanges();
 
             return RedirectToAction("Index");
         }
 
         public ActionResult View(int id)
         {
-            var entry = _dbContext.News.Find(id);
+            var entry = dbContext.News.Find(id);
             if (entry == null)
-                return HttpNotFound();
+                return NotFound();
 
             return View(entry);
         }
