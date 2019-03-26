@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
 using StructureMap;
+using Vacation24.Middleware;
 using Vacation24.Models;
 
 namespace Vacation24
@@ -21,6 +22,7 @@ namespace Vacation24
     public class Startup
     {
         private IHostingEnvironment hostingEnvironment;
+        private Container container;
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
@@ -40,7 +42,7 @@ namespace Vacation24
             });
 
             // Attach DI Container
-            var container = new Container(config =>
+            container = new Container(config =>
             {
                 config.AddRegistry(new StructureMapRegistry(
                     Configuration,
@@ -80,6 +82,11 @@ namespace Vacation24
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            // Register custom middleware
+            if (container != null) {
+                app.Use(container.GetInstance<CheckUserLockout>().ExecuteAsync);
+            }
 
             app.UseMvc(routes =>
             {

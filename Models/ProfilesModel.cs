@@ -4,21 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNetCore.Identity;
 using Vacation24.Core;
 using Vacation24.Models;
 
 namespace Vacation24.Models
 {
-    public class Profile: IExtendable<UpdateSellerViewModel>, IExtendable<UpdateUserViewModel>
+    public class Profile: IdentityUser, IExtendable<UpdateSellerViewModel>, IExtendable<UpdateUserViewModel>
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        public string UserId { get; set; }
-
-        public string UserName { get; set; }
-
         public string Name { get; set; }
         public string Address { get; set; }
         public string PostalCode { get; set; }
@@ -59,14 +52,6 @@ namespace Vacation24.Models
                 }
 
                 return string.Empty;
-            }
-        }
-
-        public string Email
-        {
-            get
-            {
-                return UserName;
             }
         }
 

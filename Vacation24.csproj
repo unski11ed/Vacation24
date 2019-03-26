@@ -7,6 +7,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Captcha" Version="4.4.0" />
     <PackageReference Include="Flurl" Version="2.8.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />

@@ -137,7 +137,7 @@ namespace Vacation24.Models
         {
             return new ProfileDetails()
             {
-                UserId = profile.UserId,
+                UserId = profile.Id,
                 UserName = profile.UserName,
                 Name = profile.Name,
                 Address = profile.Address,

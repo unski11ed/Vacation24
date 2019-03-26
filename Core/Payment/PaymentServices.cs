@@ -9,10 +9,10 @@ namespace Vacation24.Core.Payment
 {
     public interface IPaymentServices
     {
-        List<IService> GetUserServices(int userId);
+        List<IService> GetUserServices(string userId);
         List<IService> GetObjectServices(int objectId);
 
-        List<T> GetUserServices<T>(int userId);
+        List<T> GetUserServices<T>(string userId);
         List<T> GetObjectServices<T>(int objectId);
 
         IService CreateNewService(int serviceId, Dictionary<string, object> data);
@@ -33,7 +33,7 @@ namespace Vacation24.Core.Payment
             _serviceFactory = serviceFactory;
         }
 
-        public List<IService> GetUserServices(int userId)
+        public List<IService> GetUserServices(string userId)
         {
             var subscriptions = _dbContext.Subscriptions.Where(s => s.UserId == userId).ToList();
             var serviceList = new List<IService>();
@@ -59,7 +59,7 @@ namespace Vacation24.Core.Payment
             return serviceList;
         }
 
-        public List<T> GetUserServices<T>(int userId)
+        public List<T> GetUserServices<T>(string userId)
         {
             var userServices = GetUserServices(userId);
 

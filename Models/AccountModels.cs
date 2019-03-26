@@ -157,6 +157,8 @@ namespace Vacation24.Models
     {
         [Required]
         public string PasswordResetToken { get; set; }
+        [Required]
+        public string UserId { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "Hasło musi mieć minimum {2} znaków.", MinimumLength = 6)]

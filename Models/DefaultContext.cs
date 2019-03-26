@@ -10,7 +10,7 @@ namespace Vacation24.Models {
         EntityEntry Entry(object entity);
     }
 
-    public class DefaultContext: DbContext, IUniqueViewsContext, IPaymentServicesContext, IOrdersContext, INotesContext
+    public class DefaultContext: DbContext, IDbContext, IUniqueViewsContext, IPaymentServicesContext, IOrdersContext, INotesContext
     {
         //Places db set
         public DbSet<Place> Places { get; set; }
@@ -43,15 +43,6 @@ namespace Vacation24.Models {
 
         //Notes
         public DbSet<ProfileNote> ProfileNotes { get; set; }
-        //Singleton
-        private static DefaultContext _ctx = null;
-        public static DefaultContext GetContext()
-        {
-            if (_ctx == null)
-                _ctx = new DefaultContext();
-
-            return _ctx;
-        }
     }
 
     public interface IUniqueViewsContext: IDbContext

@@ -11,14 +11,19 @@ namespace Vacation24.Core
 {
     public class ObjectsActivator
     {
-        private DefaultContext context = DefaultContext.GetContext();
+        private readonly DefaultContext context;
         private readonly UserManager<Profile> userManager;
         private readonly ICurrentUserProvider currentUserProvider;
 
-        public ObjectsActivator(UserManager<Profile> userManager, ICurrentUserProvider currentUserProvider)
+        public ObjectsActivator(
+            UserManager<Profile> userManager,
+            ICurrentUserProvider currentUserProvider,
+            DefaultContext context
+        )
         {
             this.userManager = userManager;
             this.currentUserProvider = currentUserProvider;
+            this.context = context;
         }
 
         public void ActivateObjects(int userId)

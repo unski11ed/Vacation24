@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Vacation24.Models;
+using System.Web;
+using System.Web.Mvc;
+using Vacation24.Core;
+using WebMatrix.WebData;
 
 namespace Vacation24.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CustomController
     {
-        public IActionResult Index()
+        public ActionResult Index()
         {
+            if (!WebSecurity.IsAuthenticated)
+            {
+                return Redirect("/Static/Maintenance");
+            }
+
+            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+
             return View();
         }
 
-        public IActionResult Privacy()
+        public ActionResult Other(string view)
         {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(view);
         }
     }
 }
