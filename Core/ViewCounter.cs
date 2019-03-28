@@ -8,7 +8,7 @@ namespace Vacation24.Core
 {
     public interface IUniqueViewCounter
     {
-        bool AddView(int placeId, int? userId, string IP);
+        bool AddView(int placeId, string userId, string IP);
         int GetViews(int placeId);
     }
 
@@ -21,7 +21,7 @@ namespace Vacation24.Core
             _dbContext = context;
         }
 
-        public bool AddView(int placeId, int? userId, string IP)
+        public bool AddView(int placeId, string userId, string IP)
         {
             //Check for duplicate
             if(

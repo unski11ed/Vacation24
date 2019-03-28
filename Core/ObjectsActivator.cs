@@ -26,7 +26,7 @@ namespace Vacation24.Core
             this.context = context;
         }
 
-        public void ActivateObjects(int userId)
+        public void ActivateObjects(string userId)
         {
             var places = context.Places.Where(p => p.OwnerId == userId).ToList();
 
@@ -38,7 +38,7 @@ namespace Vacation24.Core
             context.SaveChanges();
         }
 
-        public bool ActivateObjectIfOwnerSubscribed(Place place, int userId)
+        public bool ActivateObjectIfOwnerSubscribed(Place place, string userId)
         {
             var isUserSubscribed = context.Subscriptions.Any(s => s.UserId == userId && s.ExpiriationTime > DateTime.Now);
 

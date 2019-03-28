@@ -2897,6 +2897,18 @@
           "lib/netstandard1.0/Remotion.Linq.dll": {}
         }
       },
+      "Rotativa.AspNetCore/1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc": "2.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Rotativa.AspNetCore.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Rotativa.AspNetCore.dll": {}
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
         "type": "package",
         "runtimeTargets": {
@@ -8090,6 +8102,18 @@
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.xml",
         "remotion.linq.2.2.0.nupkg.sha512",
         "remotion.linq.nuspec"
+      ]
+    },
+    "Rotativa.AspNetCore/1.1.1": {
+      "sha512": "LzlleiGJ+r39cDm4ln/gd1s7QEIeFtYOcxS5AIwGcE4kk1+axULj48xMV1MTEr7U+yH73VBl+aUbkJsKAVmzAA==",
+      "type": "package",
+      "path": "rotativa.aspnetcore/1.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Rotativa.AspNetCore.dll",
+        "rotativa.aspnetcore.1.1.1.nupkg.sha512",
+        "rotativa.aspnetcore.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -13566,10 +13590,11 @@
       "Microsoft.EntityFrameworkCore.Sqlite >= 2.2.3",
       "Microsoft.NETCore.App >= 2.2.0",
       "QUartz >= 3.0.7",
+      "Rotativa.AspNetCore",
       "SkiaSharp >= 1.68.0",
       "StructureMap >= 4.7.0",
       "StructureMap.Microsoft.DependencyInjection >= 2.0.0",
-      "X.PagedList.Mvc.Core"
+      "X.PagedList.Mvc.Core >= 7.6.0"
     ]
   },
   "packageFolders": {
@@ -13648,6 +13673,10 @@
             "target": "Package",
             "version": "[3.0.7, )"
           },
+          "Rotativa.AspNetCore": {
+            "target": "Package",
+            "version": "(, )"
+          },
           "SkiaSharp": {
             "target": "Package",
             "version": "[1.68.0, )"
@@ -13662,7 +13691,7 @@
           },
           "X.PagedList.Mvc.Core": {
             "target": "Package",
-            "version": "(, )"
+            "version": "[7.6.0, )"
           }
         },
         "imports": [
