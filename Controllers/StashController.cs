@@ -5,7 +5,6 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Vacation24.Core.Configuration.Images;
 using Vacation24.Models;
-using Vacation24.Models.DTO;
 using Vacation24.Core.ExtensionMethods;
 using Newtonsoft.Json;
 
@@ -27,15 +26,16 @@ namespace Vacation24.Controllers
 
         public ActionResult Get(RequestStashItem item)
         {
-            var place = _dbContext.Places.Where(p => p.Id == item.Id)
-                                        .Select(p => new { 
-                                            Id = p.Id, 
-                                            Name = p.Name, 
-                                            City = p.City, 
-                                            Voivoidship = p.Voivoidship, 
-                                            Price = p.MinimumPrice
-                                        })
-                                        .FirstOrDefault();
+            var place = _dbContext.Places
+                .Where(p => p.Id == item.Id)
+                .Select(p => new { 
+                    Id = p.Id, 
+                    Name = p.Name, 
+                    City = p.City, 
+                    Voivoidship = p.Voivoidship, 
+                    Price = p.MinimumPrice
+                })
+                .FirstOrDefault();
 
             if (place == null)
             {
@@ -49,17 +49,21 @@ namespace Vacation24.Controllers
             //Attach thumbnail
             dynamic placeDynamic = place.ToDynamic();
 
-            var placePhotoFilename = _dbContext.Photos.Where(p => p.PlaceId == item.Id)
-                                                      .Select(p => p.Filename)
-                                                      .FirstOrDefault();
+            var placePhotoFilename = _dbContext.Photos
+                .Where(p => p.PlaceId == item.Id)
+                .Select(p => p.Filename)
+                .FirstOrDefault();
 
             placeDynamic.ThumbnailSmall = Thumbnail.Uri(Thumbnail.Small, placePhotoFilename);
 
-            return Content(JsonConvert.SerializeObject(new
-            {
-                status = ResultStatus.Success,
-                item = placeDynamic
-            }));
+            return Content(
+                JsonConvert.SerializeObject(
+                    new {
+                        status = ResultStatus.Success,
+                        item = placeDynamic
+                    }
+                )
+            );
         }
 
         public ActionResult Show()
