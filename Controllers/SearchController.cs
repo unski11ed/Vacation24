@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Vacation24.Core;
 using Vacation24.Models;
-using Vacation24.Models.DTO;
 
 namespace Vacation24.Controllers
 {
     public class SearchController : CustomController
     {
-        private DefaultContext _dbContext = new DefaultContext();
-        private IUniqueViewCounter _viewsCounter;
+        private readonly IUniqueViewCounter viewsCounter;
+        private readonly DefaultContext dbContext;
 
-        public SearchController(IUniqueViewCounter viewsCounter)
+        public SearchController(
+            IUniqueViewCounter viewsCounter,
+            DefaultContext dbContext
+        )
         {
-            _viewsCounter = viewsCounter;
+            this.viewsCounter = viewsCounter;
+            this.dbContext = dbContext;
         }
 
         public ActionResult SearchForm()
@@ -27,13 +29,14 @@ namespace Vacation24.Controllers
 
         public ActionResult GetCitiesInVoivoidship(RequestCities voivoidship)
         {
-            //TODO: Dodac sortowanie po popularnosci?
-            var result = _dbContext.Places.Where(p => p.Voivoidship == voivoidship.Name || (string.IsNullOrEmpty(voivoidship.Name)))
-                                          .Select<Place, string>(p => p.City)
-                                          .OrderBy(v => v)
-                                          .Distinct()
-                                          .Take(10)
-                                          .ToList();
+            // TODO: Sort by popularity?
+            var result = dbContext.Places
+                .Where(p => p.Voivoidship == voivoidship.Name || (string.IsNullOrEmpty(voivoidship.Name)))
+                .Select<Place, string>(p => p.City)
+                .OrderBy(v => v)
+                .Distinct()
+                .Take(10)
+                .ToList();
 
             return Json(new {
                 cities = result
@@ -42,14 +45,14 @@ namespace Vacation24.Controllers
 
         public ActionResult GetCitiesInVoivoidshipWithCount(RequestCities voivoidship)
         {
-            //TODO: Dodac sortowanie po popularnosci?
-
-            var result = _dbContext.Places.Where(p => (p.Voivoidship == voivoidship.Name || (string.IsNullOrEmpty(voivoidship.Name))) && p.IsPaid)
-                                        .GroupBy(place => place.City)
-                                        .Select(group => new CititesInVoivoidshipWithCount { City = group.Key, PlacesCount = group.Count() })
-                                        .OrderByDescending(cities => cities.PlacesCount)
-                                        .Take(10)
-                                        .ToList<CititesInVoivoidshipWithCount>();
+            // TODO: Sort by popularity?
+            var result = dbContext.Places
+                .Where(p => (p.Voivoidship == voivoidship.Name || (string.IsNullOrEmpty(voivoidship.Name))) && p.IsPaid)
+                .GroupBy(place => place.City)
+                .Select(group => new CititesInVoivoidshipWithCount { City = group.Key, PlacesCount = group.Count() })
+                .OrderByDescending(cities => cities.PlacesCount)
+                .Take(10)
+                .ToList<CititesInVoivoidshipWithCount>();
 
             return Json(new
             {
@@ -59,13 +62,13 @@ namespace Vacation24.Controllers
 
         public ActionResult ViewMostPopularCities()
         {
-            var mostPopular = _dbContext.Places
-                                        .Where(p => p.IsPaid)
-                                        .GroupBy(place => place.City)
-                                        .Select(group => new CititesInVoivoidshipWithCount { City = group.Key, PlacesCount = group.Count() })
-                                        .OrderByDescending(cities => cities.PlacesCount)
-                                        .Take(10)
-                                        .ToList<CititesInVoivoidshipWithCount>();
+            var mostPopular = dbContext.Places
+                .Where(p => p.IsPaid)
+                .GroupBy(place => place.City)
+                .Select(group => new CititesInVoivoidshipWithCount { City = group.Key, PlacesCount = group.Count() })
+                .OrderByDescending(cities => cities.PlacesCount)
+                .Take(10)
+                .ToList<CititesInVoivoidshipWithCount>();
 
             ViewBag.MostPopularCities = mostPopular;
 
@@ -75,7 +78,9 @@ namespace Vacation24.Controllers
         public ActionResult ViewSpecialOffersBox(string prefferedVoivoidship = "", string prefferedCity = "", int total = 10)
         {
             //TODO: Add randomness with a fixed length of objects
-            var placesQuery = _dbContext.SpecialOffers.Where(so => so.Placement == SpecialOfferPlacement.SideBar && so.Place.IsPaid);
+            var placesQuery = dbContext.SpecialOffers
+                .Where(so => so.Placement == SpecialOfferPlacement.SideBar)
+                .Where(so => so.Place.IsPaid);
             var preferedQuery = placesQuery;
 
             if (!string.IsNullOrEmpty(prefferedCity))
@@ -85,19 +90,23 @@ namespace Vacation24.Controllers
                 preferedQuery = preferedQuery.Where(p => p.Place.Voivoidship == prefferedVoivoidship);
 
 
-            //Choose if prefrfered places by city or voivoidship has at least one element
-            //if not fallback to default query
+            // Choose if preffered places by city or voivoidship has at least one element
+            // if not fallback to default query
             IQueryable<SpecialOffer> finalQuery = (preferedQuery.Count() > 0) ? preferedQuery : placesQuery;
 
             //Get random count of elements
-            ViewBag.Places = finalQuery.OrderBy(x => Guid.NewGuid()).Take(total).Select(offer => offer.Place).ToList();
+            ViewBag.Places = finalQuery
+                .OrderBy(x => Guid.NewGuid())
+                .Take(total)
+                .Select(offer => offer.Place)
+                .ToList();
 
             return View();
         }
 
         public ActionResult ViewNewestObjectsBox(int count = 4)
         {
-            ViewBag.Places = _dbContext.Places.Where(p => p.IsPaid)
+            ViewBag.Places = dbContext.Places.Where(p => p.IsPaid)
                                               .OrderByDescending(p => p.Created)
                                               .Take(count);
             
@@ -106,7 +115,7 @@ namespace Vacation24.Controllers
 
         public ActionResult ViewMostPopularBox(int count = 4)
         {
-            ViewBag.Places = _dbContext.Places.Where(p => p.IsPaid)
+            ViewBag.Places = dbContext.Places.Where(p => p.IsPaid)
                                               .OrderByDescending(p => p.UniqueViews)
                                               .Take(count);
 
@@ -119,7 +128,7 @@ namespace Vacation24.Controllers
             var result = new Dictionary<string, List<string>>();
 
             foreach(var r in request){
-                var l = _dbContext.Places.Where(p => p.Region == r)
+                var l = dbContext.Places.Where(p => p.Region == r)
                                          .OrderByDescending(p => p.UniqueViews)
                                          .Select<Place, string>(p => p.City)
                                          .Distinct()
@@ -136,20 +145,23 @@ namespace Vacation24.Controllers
         {
             var rng = new Random();
 
-            var promotionPlaces = _dbContext.SpecialOffers.Where(o => o.Placement == SpecialOfferPlacement.HomePage && o.ExpiriationTime > DateTime.Now && o.Place.IsPaid)
-                                                          .OrderBy(o => Guid.NewGuid())
-                                                          .Take(10)
-                                                          .Select<SpecialOffer, PromotedObject>(so => new PromotedObject() { Object = so.Place, Promoted = true });
+            var promotionPlaces = dbContext.SpecialOffers
+                .Where(o => o.Placement == SpecialOfferPlacement.HomePage)
+                .Where(o => o.ExpiriationTime > DateTime.Now && o.Place.IsPaid)
+                .OrderBy(o => Guid.NewGuid())
+                .Take(10)
+                .Select<SpecialOffer, PromotedObject>(so => new PromotedObject() { Object = so.Place, Promoted = true });
 
-            var topPlaces = _dbContext.Places.Where(p => !promotionPlaces.Select(pp => pp.Object.Id).Contains(p.Id) && p.IsPaid)
-                                             .OrderBy(p => p.UniqueViews)
-                                             .Take(30)
-                                             .Select<Place, PromotedObject>(p => new PromotedObject(){Object = p, Promoted = false});
+            var topPlaces = dbContext.Places
+                .Where(p => !promotionPlaces.Select(pp => pp.Object.Id).Contains(p.Id) && p.IsPaid)
+                .OrderBy(p => p.UniqueViews)
+                .Take(30)
+                .Select<Place, PromotedObject>(p => new PromotedObject(){Object = p, Promoted = false});
 
-
-            var result = promotionPlaces.Union(topPlaces)
-                                        .OrderBy(p => p.Object.Name)
-                                        .ToList();
+            var result = promotionPlaces
+                .Union(topPlaces)
+                .OrderBy(p => p.Object.Name)
+                .ToList();
 
             return View(result);
         }
@@ -157,9 +169,10 @@ namespace Vacation24.Controllers
         [HttpPost]
         public ActionResult GetPopularCitiesByRegion(RequestPopularCitites request)
         {
-            var cities = _dbContext.Places.Where(p => p.Region == request.Criteria)
-                                          .Select(p => p.City)
-                                          .ToList();
+            var cities = dbContext.Places
+                .Where(p => p.Region == request.Criteria)
+                .Select(p => p.City)
+                .ToList();
 
             return Json(new {Cities = cities });
         }
@@ -167,8 +180,9 @@ namespace Vacation24.Controllers
         [HttpPost]
         public ActionResult GetPopularCitiesByOption(RequestPopularCitites request)
         {
-            var cities = _dbContext.Places.Where(p => p.AdditionalOptions.Contains(request.Criteria))
-                                          .Select(p => p.City).ToList();
+            var cities = dbContext.Places
+                .Where(p => p.AdditionalOptions.Contains(request.Criteria))
+                .Select(p => p.City).ToList();
             return Json(new { Cities = cities });
         }
 
