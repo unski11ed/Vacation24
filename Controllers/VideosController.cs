@@ -4,23 +4,26 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Vacation24.Models;
-using Vacation24.Models.DTO;
 
 namespace Vacation24.Controllers
 {
     public class VideosController : Controller
     {
-        private DefaultContext _dbContext = DefaultContext.GetContext();
         private static readonly Regex YoutubeVideoRegex
             = new Regex(@"youtu(?:\.be|be\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)", RegexOptions.IgnoreCase);
+        private readonly DefaultContext dbContext;
 
+        public VideosController(DefaultContext dbContext) {
+            this.dbContext = dbContext;
+        }
 
         public ActionResult Save(SetVideo video)
         {
-            if (_dbContext.Places.Any(p => p.Id == video.postId))
+            if (dbContext.Places.Any(p => p.Id == video.postId))
             {
-                var videoEntity = _dbContext.Videos.FirstOrDefault(v => v.PlaceId == video.postId);
+                var videoEntity = dbContext.Videos.FirstOrDefault(v => v.PlaceId == video.postId);
                 var embededUrl = string.Empty;
                  
                 try{
@@ -35,7 +38,7 @@ namespace Vacation24.Controllers
                 //Add new entity or replace url in existing
                 if (videoEntity == null)
                 {
-                    _dbContext.Videos.Add(new Video()
+                    dbContext.Videos.Add(new Video()
                     {
                         PlaceId = video.postId,
                         EmbedUrl = embededUrl,
@@ -46,10 +49,10 @@ namespace Vacation24.Controllers
                 {
                     videoEntity.EmbedUrl = embededUrl;
                     videoEntity.OriginalUrl = video.url;
-                    _dbContext.Entry<Video>(videoEntity).State = System.Data.Entity.EntityState.Modified;
+                    dbContext.Entry<Video>(videoEntity).State = EntityState.Modified;
                 }
 
-                _dbContext.SaveChanges();
+                dbContext.SaveChanges();
 
                 return Json(new ResultViewModel()
                 {
@@ -67,18 +70,18 @@ namespace Vacation24.Controllers
 
         public ActionResult View(RequestId placeId)
         {
-            var video = _dbContext.Videos.FirstOrDefault(v => v.PlaceId == placeId.Id);
+            var video = dbContext.Videos.FirstOrDefault(v => v.PlaceId == placeId.Id);
 
             return Json(video);
         }
 
         public ActionResult Clear(RequestId placeId)
         {
-            var video = _dbContext.Videos.FirstOrDefault(v => v.PlaceId == placeId.Id);
+            var video = dbContext.Videos.FirstOrDefault(v => v.PlaceId == placeId.Id);
             if (video != null)
             {
-                _dbContext.Videos.Remove(video);
-                _dbContext.SaveChanges();
+                dbContext.Videos.Remove(video);
+                dbContext.SaveChanges();
             }
 
             return Json(new ResultViewModel()
