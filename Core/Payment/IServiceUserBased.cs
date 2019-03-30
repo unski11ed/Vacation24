@@ -8,6 +8,6 @@ namespace Vacation24.Core.Payment
 {
     public interface IServiceUserBased
     {
-        int UserId { get; set; }
+        string UserId { get; set; }
     }
 }

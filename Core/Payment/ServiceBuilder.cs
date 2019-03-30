@@ -18,7 +18,7 @@ namespace Vacation24.Core.Payment
         [ServiceBuild]
         private void buildUserData(IServiceUserBased service, Dictionary<string, object> data)
         {
-            service.UserId = (int)data["userId"];
+            service.UserId = (string)data["userId"];
         }
 
         [ServiceBuild]

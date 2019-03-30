@@ -10,7 +10,7 @@ namespace Vacation24.Models
     {
         public int Id { get; set; }
 
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         [Column(TypeName = "datetime2")]
         public DateTime ExpiriationTime { get; set; }

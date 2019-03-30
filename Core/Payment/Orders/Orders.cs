@@ -32,9 +32,10 @@ namespace Vacation24.Core.Payment.Orders
             }
         }
 
-        private IPaymentRequester requester;
-        private IOrdersContext dbContext;
-        private AppConfiguration configuration;
+        private readonly IPaymentRequester requester;
+        private readonly IOrdersContext dbContext;
+        private readonly ICurrentUserProvider currentUserProvider;
+        private readonly AppConfiguration configuration;
         public Orders(
             IPaymentRequester requester,
             IOrdersContext context,
@@ -43,6 +44,7 @@ namespace Vacation24.Core.Payment.Orders
         {
             this.requester = requester;
             this.dbContext = context;
+            this.configuration = configuration;
         }
 
         public string Create(
@@ -54,9 +56,7 @@ namespace Vacation24.Core.Payment.Orders
             string returnUrl
         )
         {
-            var profile = dbContext.Profiles
-                .Where(p => p.UserId == userId)
-                .First();
+            var profile = dbContext.Profiles.Find(userId);
 
             var serviceDefinition = dbContext.Services.Find(definitionId);
 

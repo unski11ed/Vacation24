@@ -25,7 +25,7 @@ namespace Vacation24.Models
         public string ExternalOrderId { get; set; }
         public string PayUOrderId { get; set; }
 
-        public int ProfileId { get; set; }
+        public string ProfileId { get; set; }
 
         public OrderStatus OrderStatus { get; set; }
 

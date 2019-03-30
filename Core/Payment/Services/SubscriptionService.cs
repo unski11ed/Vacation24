@@ -10,10 +10,10 @@ namespace Vacation24.Services
 {
     public class SubscriptionService : ServiceLogic<Subscription>, IServiceUserBased
     {
-        private int userId = -1;
+        private string userId = null;
         private readonly ObjectsActivator objectsActivator;
 
-        public int UserId
+        public string UserId
         {
             get { return userId; }
             set{ userId = value; }

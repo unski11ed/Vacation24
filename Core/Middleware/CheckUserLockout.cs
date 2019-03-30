@@ -27,10 +27,7 @@ namespace Vacation24.Middleware {
         {
             if (currentUserProvider.IsAuthenticated)
             {
-                var profile = dbContext.Profiles.Where(
-                        p => p.UserId == currentUserProvider.UserId
-                    )
-                    .FirstOrDefault();
+                var profile = dbContext.Profiles.Find(currentUserProvider.UserId);
                 
                 if (profile == null || profile.Locked)
                 {

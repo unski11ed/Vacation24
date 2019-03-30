@@ -14,18 +14,18 @@ namespace Vacation24.Core
 
     public class UniqueViewCounter : IUniqueViewCounter
     {
-        private IUniqueViewsContext _dbContext;
+        private IUniqueViewsContext dbContext;
 
         public UniqueViewCounter(IUniqueViewsContext context)
         {
-            _dbContext = context;
+            dbContext = context;
         }
 
         public bool AddView(int placeId, string userId, string IP)
         {
             //Check for duplicate
             if(
-                _dbContext.UniqueViews
+                dbContext.UniqueViews
                     .Any(
                         v => v.IpAddress == IP &&
                             v.PlaceId == placeId &&
@@ -36,7 +36,7 @@ namespace Vacation24.Core
                 return false;
             }
 
-            _dbContext.UniqueViews.Add(
+            dbContext.UniqueViews.Add(
                 new UniqueView()
                     {
                         PlaceId = placeId,
@@ -44,14 +44,14 @@ namespace Vacation24.Core
                         IpAddress = IP
                     }
             );
-            _dbContext.SaveChanges();
+            dbContext.SaveChanges();
 
             return true;
         }
 
         public int GetViews(int placeId)
         {
-            return _dbContext.UniqueViews.Where(v => v.PlaceId == placeId).Count();
+            return dbContext.UniqueViews.Where(v => v.PlaceId == placeId).Count();
         }
     }
 }
