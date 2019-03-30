@@ -13639,7 +13639,7 @@
       "SkiaSharp >= 1.68.0",
       "StructureMap >= 4.7.0",
       "StructureMap.Microsoft.DependencyInjection >= 2.0.0",
-      "System.Linq.Dynamic.Core",
+      "System.Linq.Dynamic.Core >= 1.0.12",
       "X.PagedList.Mvc.Core >= 7.6.0"
     ]
   },
@@ -13737,7 +13737,7 @@
           },
           "System.Linq.Dynamic.Core": {
             "target": "Package",
-            "version": "(, )"
+            "version": "[1.0.12, )"
           },
           "X.PagedList.Mvc.Core": {
             "target": "Package",

@@ -9,7 +9,7 @@ namespace Vacation24.Core {
     public class CurrentUserProvider: ICurrentUserProvider {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        CurrentUserProvider(IHttpContextAccessor httpContextAccessor) {
+        public CurrentUserProvider(IHttpContextAccessor httpContextAccessor) {
             this.httpContextAccessor = httpContextAccessor;
         }
 

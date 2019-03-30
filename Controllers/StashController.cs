@@ -12,11 +12,16 @@ namespace Vacation24.Controllers
 {
     public class StashController : Controller
     {
-        public DefaultContext _dbContext = new DefaultContext();
+        private readonly DefaultContext dbContext;
+
+        public StashController(DefaultContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
 
         public ActionResult GetList(RequestStashList ids)
         {
-            var places = _dbContext.Places
+            var places = dbContext.Places
                 .Where(p => ids.Ids.Contains(p.Id))
                 .Select(p => new { Id = p.Id, Name = p.Name, City = p.City, Voivoidship = p.Voivoidship })
                 .ToList();
@@ -26,7 +31,7 @@ namespace Vacation24.Controllers
 
         public ActionResult Get(RequestStashItem item)
         {
-            var place = _dbContext.Places
+            var place = dbContext.Places
                 .Where(p => p.Id == item.Id)
                 .Select(p => new { 
                     Id = p.Id, 
@@ -49,7 +54,7 @@ namespace Vacation24.Controllers
             //Attach thumbnail
             dynamic placeDynamic = place.ToDynamic();
 
-            var placePhotoFilename = _dbContext.Photos
+            var placePhotoFilename = dbContext.Photos
                 .Where(p => p.PlaceId == item.Id)
                 .Select(p => p.Filename)
                 .FirstOrDefault();

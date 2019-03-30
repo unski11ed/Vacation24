@@ -12,6 +12,12 @@ namespace Vacation24.Models {
 
     public class DefaultContext: DbContext, IDbContext, IUniqueViewsContext, IPaymentServicesContext, IOrdersContext, INotesContext
     {
+        private readonly string connectionString;
+
+        public DefaultContext(string connectionString)
+        {
+            this.connectionString = connectionString;
+        }
         //Places db set
         public DbSet<Place> Places { get; set; }
         public DbSet<Price> Prices { get; set; }
@@ -43,6 +49,10 @@ namespace Vacation24.Models {
 
         //Notes
         public DbSet<ProfileNote> ProfileNotes { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            optionsBuilder.UseSqlite($"Data Source={this.connectionString}");
+        }
     }
 
     public interface IUniqueViewsContext: IDbContext

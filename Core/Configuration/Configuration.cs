@@ -55,6 +55,7 @@ namespace Vacation24.Core.Configuration
 
     public class AppConfiguration
     {
+        public string SqliteDatabaseFile { get; set; }
         public SiteConfiguration SiteConfiguration { get; set; }
         public PayUConfiguration PayUConfiguration { get; set; }
         public RecaptchaConfiguration RecaptchaConfiguration { get; set; }

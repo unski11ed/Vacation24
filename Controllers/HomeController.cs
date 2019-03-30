@@ -7,14 +7,14 @@ using Vacation24.Core;
 
 namespace Vacation24.Controllers
 {
-    public class HomeController : CustomController
+    public class HomeController : Controller
     {
-        public ActionResult Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        public ActionResult Other(string view)
+        public IActionResult Other(string view)
         {
             return View(view);
         }

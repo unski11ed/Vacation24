@@ -13,18 +13,20 @@ namespace Vacation24.Controllers
             return View("Error");
         }
 
-        public ActionResult NotFound()
+        /*
+        public override ActionResult NotFound()
         {
             Response.StatusCode = 404;
 
             return View("NotFound");
         }
 
-        public ActionResult Unauthorized()
+        public override ActionResult Unauthorized()
         {
             Response.StatusCode = 403;
 
             return View("Unauthorized");
         }
+        */
     }
 }

@@ -15,7 +15,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
+using Rotativa.AspNetCore;
 using StructureMap;
+using Vacation24.Core;
+using Vacation24.Core.Configuration;
+using Vacation24.Core.Mailer.Concrete;
+using Vacation24.Core.Payment;
 using Vacation24.Middleware;
 using Vacation24.Models;
 
@@ -43,20 +48,27 @@ namespace Vacation24
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            // Attach DI Container
-            container = new Container(config =>
-            {
-                config.AddRegistry(new StructureMapRegistry(
-                    Configuration,
-                    hostingEnvironment
-                ));
-                config.Populate(services);
-            });
-
             // Attach SQLite
             var connection = "./data/database.db";
             services.AddDbContext<DefaultContext>(options =>
                 options.UseSqlite(connection));
+
+            // Configure DependencyInjection
+            services.AddSingleton<AppConfiguration>((serviceProvider) => new AppConfiguration(Configuration));
+
+            services.AddScoped<IActivationMail, ActivationMail>();
+            services.AddScoped<IContactFormMail, ContactFormMail>();
+            services.AddScoped<IContactFormMailConfirmation, ContactFormMailConfirmation>();
+            services.AddScoped<IPasswordResetMail, PasswordResetMail>();
+            services.AddScoped<ISiteContactFormMail, SiteContactFormMail>();
+            
+            services.AddTransient<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddTransient<IPaymentServices, PaymentServices>();
+            
+            services.AddSingleton<INotesContext, DefaultContext>();
+            services.AddSingleton<IOrdersContext, DefaultContext>();
+            services.AddSingleton<IPaymentServicesContext, DefaultContext>();
+            services.AddSingleton<IUniqueViewsContext, DefaultContext>();
 
             // Setup Authentication
             services.AddDefaultIdentity<Profile>()
@@ -91,13 +103,13 @@ namespace Vacation24
 
             // Register Quartz Jobs            
             var registrationTask = this.RegisterQuartzJobs();
-            registrationTask.Start();
+            //registrationTask.Start();
 
             // Session
             services.AddSession(options => 
             { 
                 options.IdleTimeout = TimeSpan.FromDays(365); 
-            }); 
+            });
 
             // Other
             services.AddAntiforgery();
@@ -138,6 +150,9 @@ namespace Vacation24
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // Rotativa PDF Generator
+            RotativaConfiguration.Setup(env);
         }
 
         private async Task RegisterQuartzJobs() {
