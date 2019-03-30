@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -55,6 +56,37 @@ namespace Vacation24
             var connection = "./data/database.db";
             services.AddDbContext<DefaultContext>(options =>
                 options.UseSqlite(connection));
+
+            // Setup Authentication
+            services.AddDefaultIdentity<Profile>()
+                .AddEntityFrameworkStores<DefaultContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequiredLength = 6;
+
+                // Lockout settings.
+                options.Lockout.MaxFailedAccessAttempts = 10;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromDays(365);
+
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.SlidingExpiration = true;
+            });
 
             // Register Quartz Jobs            
             var registrationTask = this.RegisterQuartzJobs();
