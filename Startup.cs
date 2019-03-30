@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using BotDetect.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -92,6 +93,15 @@ namespace Vacation24
             var registrationTask = this.RegisterQuartzJobs();
             registrationTask.Start();
 
+            // Session
+            services.AddSession(options => 
+            { 
+                options.IdleTimeout = TimeSpan.FromDays(365); 
+            }); 
+
+            // Other
+            services.AddAntiforgery();
+            services.AddMemoryCache();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             registrationTask.Wait();
@@ -114,6 +124,8 @@ namespace Vacation24
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSession();
+            app.UseCaptcha(Configuration);
 
             // Register custom middleware
             if (container != null) {
