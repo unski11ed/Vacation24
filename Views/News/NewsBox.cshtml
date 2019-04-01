@@ -1,0 +1,15 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="greybox news">
+    <h3>Aktualności</h3>
+    @foreach (var news in ViewBag.News)
+    {
+        <div class="singlenews">
+            <h4>@news.Title</h4>
+            <p>@news.ShortContent. <a href="@Url.Action("View", "News", new { title = news.Title, id = news.Id})">więcej</a></p>
+        </div>
+    }
+    <a href="@Url.Action("Index", "News")" class="morenews">Pokaż wszystkie aktualności</a>
+</div>

@@ -1,0 +1,19 @@
+﻿@model Wczasy24_MVC4.Models.News
+
+@{
+    ViewBag.Title = "View";
+}
+
+<div class="main left">
+    <h2 class="sub">
+            @Model.Title<br />
+        <span>@Model.Created.ToString("dd'.'MM'.'yyyy HH':'mm")</span>
+    </h2>
+    <div class="staticbox">
+        <p>@Html.Raw(Model.Content)</p>
+    </div>
+    <div class="staticbox">
+        <a href="@Url.Action("Index", "News")"><strong>Powrót do listy aktualności</strong></a>
+    </div>
+</div>
+@Html.Action("Right", "Sidebar")

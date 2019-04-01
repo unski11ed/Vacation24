@@ -1,0 +1,23 @@
+﻿@model object
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="main left">
+    <h2>Edycja danych</h2>
+    @{
+        if (ViewBag.isSeller)
+        {
+            Html.RenderPartial("EditOwnerProfile", Model);
+        }
+        else
+        {
+            Html.RenderPartial("EditUserProfile", Model);
+        }
+    }
+</div>
+
+@Html.Action("Right", "Sidebar")
+    
+

@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+}
+
+@model List<Wczasy24_MVC4.Models.DTO.ObjectPromotionItem>
+
+<div class="mytab">Promocja obiektu</div>
+<ul class="mytabinfo">
+    @foreach (var promotion in Model)
+    {
+        <li>
+            <span class="mytabname">@promotion.Name</span>
+            <a href="#" class="mytabmore">Szczegóły</a>
+            <span class="myinfobar @(promotion.IsActive ? "active" : "")">
+                @(promotion.IsActive ? "Aktywna" : "Nieaktywna")
+            </span>
+            @if(promotion.IsActive){
+                <span class="myinfobar">Pozostało @((int)Math.Ceiling((promotion.Expiriation - DateTime.Now).TotalDays)) dni</span>
+            }
+            else
+            {
+                <span>
+                    <a href="#" data-handler="@promotion.Handler" data-additional="{'objectId' : '@ViewBag.ObjectId'}" class="payment-modal-activator myinfobar violet">Aktywuj</a>
+                </span>   
+            }
+        </li>
+    }
+    <li>
+        <span class="mytabname">Twoja strona www</span>
+        <a href="#" class="mytabmore">Szczegóły</a>
+        <span class="myinfobar clear"></span>
+        <form action="/Contact" method="post">
+            <input type="hidden" name="Subject" value="Zapytanie odnośnie własnej strony WWW"/>
+            <input type="submit" class="myinfobar blue" value="WYŚLIJ ZAPYTANIE">
+        </form>
+    </li>
+</ul>

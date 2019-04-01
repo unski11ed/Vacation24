@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Finalizacja płatności.";
+}
+
+<h2>Finalizacja płatności</h2>
+
+<div class="staticbox">
+@if (ViewBag.Success)
+{
+    <p>Płatność została przyjęta. <a href="@Url.Action("Index", "Owner")">Powrót do usług.</a></p>
+}else{
+    <p>Płatność została anulowana. <a href="@Url.Action("Index", "Owner")">Powrót do usług.</a></p>
+}
+</div>

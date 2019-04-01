@@ -1,0 +1,65 @@
+﻿@model Wczasy24_MVC4.Models.LoginModel
+
+@{
+    Layout = null;
+}
+
+@if(ViewBag.NotConfirmed != null)
+{
+    <p class="info-login-failed">Adres email tego konta nie został potwierdzony. Sprawdź skrzynkę pod kontem wiadomości aktwyacyjnej. Jeśli nie otrzymałeś wiadomości -  @Html.ActionLink("wyślij ją jeszcze raz.", "ResendActivation", new { userId = ViewBag.UserId })</p>
+    
+    <script>
+        $(".info-login-failed a").click(function () {
+            var $link = $(this);
+            var $p = $link.parent();
+
+            if ($link.hasClass('not-active')) {
+                return false;
+            }
+
+            $link.addClass('not-active');
+
+            AjaxLoader.Show();
+            $.get($link.attr('href'), function (data) {
+                AjaxLoader.Hide();
+
+                if (data.Status == ResultType.Success) {
+                    $p.removeClass('info-login-failed')
+                      .addClass('info-login-success')
+                      .text(data.Message);
+                } else {
+                    $p.text("Nie udało się ponownie przesłać wiadomości. Spróbuj jeszcze raz.")
+                }
+            });
+
+            return false;
+        });
+    </script>
+}
+else if(ViewBag.Success != null){
+    <p class="info-login-success">Pomyślnie zalogowano. @Html.ActionLink("Przejdź do strony głównej", "Index", "Home")</p>
+}
+else
+{
+    <h2 class="sub">Posiadam konto<br /><span>Logowanie</span></h2>
+    <div class="greybox">
+        @using (Html.BeginForm("UserLogin", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+        
+            @Html.LabelFor(model => model.Email)
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+        
+            @Html.LabelFor(model => model.Password)
+            @Html.EditorFor(model => model.Password)
+            @Html.ValidationMessageFor(model => model.Password)
+            <br>
+            <button type="submit">Zaloguj się</button>
+            <div class="forgot">Nie pamiętasz hasła? <a href="@Url.Action("PasswordReset")">Przypomnij</a></div>
+        }
+    </div>
+}
+
+

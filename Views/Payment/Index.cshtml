@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Płatności serwisu Wczasy24";
+}
+
+@Scripts.Render("~/Scripts/payment.js")
+
+@{
+    Func<Microsoft.AspNetCore.Html.IHtmlContent> RenderSubscriptionButton = @<text>@{
+            if (!ViewBag.IsOwner)
+            {
+                <a href="@Url.Action("Login", "Account")#regsec">Zarejestrtuj się i zamów!</a>
+            }
+            else
+            {
+                if (!ViewBag.ActiveServices["SubscriptionService"].IsActive)
+                {
+                    <a href="javascript:void(0)" class="payment-modal-activator" data-handler="SubscriptionService" data-additional="{'userId': '@ViewBag.UserId' }">Aktywuj</a>
+                }
+                else
+                {
+                    <p class="promo-active">Aktywne</p>
+                }
+            }
+        }
+        </text>;
+
+    Func<string, Microsoft.AspNetCore.Html.IHtmlContent> RenderPromotionButton = @<text>@{
+            if (!ViewBag.IsOwner)
+            {
+                <a href="@Url.Action("Login", "Account")#regsec)">Zarejestrtuj się i zamów!</a>
+            }
+            else
+            {
+                if (ViewBag.ObjectId != null)
+                {
+                    if (!ViewBag.ActiveServices[item].IsActive)
+                    {
+                        <a href="javascript:void(0)" class="payment-modal-activator" data-handler="@item" data-additional="{'objectId': '@ViewBag.ObjectId' }">Aktywuj</a>
+                    }
+                    else
+                    {
+                        <p class="promo-active">Aktywne</p>
+                    }
+
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", "Owner")">Aktywuj</a>
+                }
+            }
+        }
+        </text>;
+}
+
+<div class="staticbox" id="promotions">
+    <h1>Abonament + Promocje</h1>
+    <hr>
+    <div class="payment_box">
+        <h3>Abonament</h3>
+        <div class="half_payment">
+            <img src="/Images/abonament_promo.jpg" />
+        </div>
+        <div class="half_payment">
+            <p>
+                Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies. Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada fames ac turpis velit, rhoncus eu, luctus et interdum adipiscing wisi. Aliquam erat ac ipsum. Integer aliquam purus. Quisque lorem tortor fringilla sed, vestibulum id, eleifend justo vel bibendum sapien massa ac turpis faucibus orci luctus non,
+            </p>
+            <hr>
+            <p class="price">
+                od <span>@((int)ViewBag.ServicePrices["SubscriptionService"].Price)</span> zł za @ViewBag.ServicePrices["SubscriptionService"].Days dni
+            </p>
+            @RenderSubscriptionButton()
+        </div>
+    </div>
+
+    <div class="payment_box">
+        <h3>Promocja na stronie głównej</h3>
+        <div class="half_payment">
+            <a href="/Images/home_promo.jpg" data-lightbox="payment"><img src="/Images/home_promo.jpg" /></a>
+        </div>
+        <div class="half_payment">
+            <p>
+                Promowane w ten sposób oferty wyświetlają się na stronie głównej dzięki czemu zawsze są widoczne dla odwiedzających serwis. Promowanych jest 10 ofert wyświetlanych losowo.
+            </p>
+            <hr>
+            <p class="price">
+                od <span>@((int)ViewBag.ServicePrices["PromotionHomeService"].Price)</span> zł za @ViewBag.ServicePrices["PromotionHomeService"].Days dni
+            </p>
+            @RenderPromotionButton("PromotionHomeService")
+        </div>
+    </div>
+
+    <div class="payment_box">
+        <h3>Promocja na panelu bocznym</h3>
+        <div class="half_payment">
+            <a href="/Images/sidebar_promo.jpg" data-lightbox="payment"><img src="/Images/sidebar_promo.jpg" /></a>
+        </div>
+        <div class="half_payment">
+            <p>
+                Przewijany boks reklamowy o wymiarach 260x230 pikseli wyświetlany na stronie głównej, stronie województwa i stronie miejscowości. Składa się ze zdjęcia głównego, nazwy ośrodka i nazwy miejscowości. Promowanych jest 10 ofert wyświetlanych losowo.
+            </p>
+            <hr>
+            <p class="price">
+                od <span>@((int)ViewBag.ServicePrices["PromotionSideService"].Price)</span> zł za @ViewBag.ServicePrices["PromotionSideService"].Days dni
+            </p>
+            @RenderPromotionButton("PromotionSideService")
+        </div>
+    </div>
+
+    <div class="payment_box">
+        <h3>Promocja w wynikach wyszukiwania</h3>
+        <div class="half_payment">
+            <a href="/Images/search_promo.jpg" data-lightbox="payment"><img src="/Images/search_promo.jpg" /></a>
+        </div>
+        <div class="half_payment">
+            <p>
+                W ramach usługi Państwa obiekt zawsze znajdzie się na najwyższych pozycjach na liście ofert danego województwa i miejscowości i będzie wyróżniony specjalnym kolorem. Kolejność wyświetlania wyróżnionych obiektów jest losowa.
+            </p>
+            <hr>
+            <p class="price">
+                od <span>@((int)ViewBag.ServicePrices["PromotionSearchService"].Price)</span> zł za @ViewBag.ServicePrices["PromotionSearchService"].Days dni
+            </p>
+            @RenderPromotionButton("PromotionSearchService")
+        </div>
+    </div>
+</div>
+
+<script>
+    Payments.RegisterButtonHandlers();
+</script>

@@ -1,0 +1,314 @@
+﻿@{
+    ViewBag.Title = ViewBag.Mode == "Edit" ? "Edytowanie obiektu" : "Tworzenie nowego obiektu";
+}
+<div class="main left">
+    <section class="objectadd row">
+        <h2 class="sub">Dodawanie obiektu<br /><span>TRYB EDYCJI - Kliknij w pole aby je uzupełnić</span></h2>
+        <div class="objectaddbox">
+            <form id="place_edit">
+                <input type="hidden" name="mode" value="@ViewBag.Mode" />
+                @if (ViewBag.Mode != null)
+                {
+                    <input type="hidden" name="objectId" value="@ViewBag.Id" />
+                }
+                <input class="objecttitle" name="Name" type="text" value="Wpisz nazwę obiektu" onblur="if(value=='') value = 'Wpisz nazwę obiektu'" onfocus="if(value=='Wpisz nazwę obiektu') value = ''">
+                
+                <!--
+                <div class="options">
+                    <a class="addtoclip disabled" href="#">Dodaj do schowka</a>
+                    <a class="objectprint disabled" href="#">Drukuj ofertę</a>
+                    <a class="objectpdf disabled" href="#">Pobierz oferte w PDF</a>
+                    <a class="objectshare disabled" href="#">Poleć znajomym</a>
+                    <a class="fblikedisabled" href="#">&nbsp;</a>
+                </div>
+                -->
+                
+                <div class="objectinfo">
+                    <div class="addimg">
+
+                    </div>
+                    <div class="objectinfomain">
+                        <div class="infoinput">
+                            <label>Cena od:</label><input id="objectprice" data-type="decimal" name="MinimumPrice" type="text" placeholder="..." onchange="value = parseFloat(value.replace(',', '.')).toFixed(2).replace('.', ',')">
+                        </div>
+                        <div class="infoinput infoselect">
+                            <label>Typ:</label>
+                            <select name="Type">
+                                <option value="" disabled selected>Wybierz...</option>
+                                @foreach (var type in ObjectTypes.List)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="infoinput noborder labelgroup">
+                            <label>Adres:</label><input id="objectadres" name="Address" type="text" placeholder="...">
+                        </div>
+                        <div class="infoinput noborder">
+                            <label>Kod pocztowy:</label><input id="objectpost" name="Postal" type="text" placeholder="...">
+                        </div>
+                        <div class="infoinput noborder">
+                            <label>Miejscowość:</label><input id="objectmiejsc" name="City" type="text" placeholder="...">
+                        </div>
+                        <div class="infoinput infoselect">
+                            <label>Województwo:</label>
+                            <select name="Voivoidship">
+                                <option value="" disabled selected>Wybierz...</option>
+                                @foreach (var voivoidship in Voivoidships.List)
+                                {
+                                    <option value="@voivoidship">@voivoidship</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="infoinput infoselect">
+                            <label for="Region">Region</label>
+                            <select name="Region">
+                                <option value="">Wybierz</option>
+                                <option value="morze">Nad morzem</option>
+                                <option value="jezioro">Nad jeziorem</option>
+                                <option value="gory">W górach</option>
+                                <option value="mazury">Mazury</option>
+                            </select>
+                        </div>
+                        <div class="infoinput">
+                            <label>Telefon:</label><input id="objectphone" name="Phone" type="text" placeholder="...">
+                        </div>
+                        <div class="infoinput">
+                            <label>E-mail:</label><input id="objectmail" name="Email" type="text" placeholder="...">
+                        </div>
+                        <div class="infoinput">
+                            <label>Strona www:</label><input id="objectweb" name="Web" type="text" placeholder="...">
+                        </div>
+
+                        <!--Map Position-->
+                        <input type="hidden" value="0" name="Lattitude" id="objectlattitude" />
+                        <input type="hidden" value="0" name="Longitude" id="objectlongitude" />
+
+                        <!--Additional Options-->
+                        <input type="hidden" name="AdditionalOptions" value=""/>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+                <div class="objecticons">
+                    <a href="#" class="addicons">Dodaj ikony opisujące obiekt</a>
+                    <div class="objecticonslist">
+
+                    </div>
+                </div>
+                <div class="objectdescription">
+                    <div id="tab-container" class="tab-container">
+                        <ul class="etabs">
+                            <li class="tab"><a href="#tabopis">Opis</a></li>
+                            <li class="tab"><a href="#tabgaleria">Galeria</a></li>
+                            <li class="tab"><a href="#tabopcje">Udogodnienia</a></li>
+                            <li class="tab"><a href="#tabcennik">Cennik</a></li>
+                            <li class="tab"><a href="#tablokalizacja">Lokalizacja</a></li>
+                            <li class="tab"><a href="#tabkomentarze">Komentarze</a></li>
+                        </ul>
+                        <div id="tabopis">
+                            <textarea name="Description" class="txt_extended" id="description_extended"></textarea>
+                        </div>
+                        <div id="tabgaleria">
+                            <h3>Zdjęcia</h3>
+                            <div id="galeria_input"></div>
+                            <div class="images_grasp">
+
+                            </div>
+							<div class="clearfix"></div>
+                            <a href="#" id="add_gallery_image">Dodaj zdjęcie...</a>
+                            <!--    Video    -->
+                            <div class="video-wrap">
+                                <h3>Wideo</h3>
+                                <div class="video_grasp empty">
+                                </div>
+                                <div>
+                                    <label for="youtube-link-input">Link do YouTube:</label>
+                                    <input id="youtube-link-input" type="text" placeholder="np. https://www.youtube.com/watch?v=mFGuyXtTCSs">
+                                    <button type="button" class="cmd-submit-video">Prześlij</button>
+                                    <button type="button" class="cmd-clear-video">Usuń</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tabopcje">
+                            <label>Przyjazne seniorom</label>
+                            <input type="checkbox" class="additionalOption" data-value="SeniorFriendly" />
+
+                            <label>Imprezy okolicznośćiowe</label>
+                            <input type="checkbox" class="additionalOption" data-value="EventsAccepted" />
+                        </div>
+                        <div id="tabcennik">
+                            <div class="prices_wrap">
+
+                                <div class="add_price">
+                                    <input type="text" class="in_price_name" />
+                                    <input type="text" class="in_price_duration" />
+                                    <input type="text" class="in_price_value numeric" />
+                                    <a href="#" class="price_add">Dodaj</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tablokalizacja">
+                            <h3>LOKALIZACJA USTAWIANA AUTOMATYCZNIE<br/><span>Jeśli chcesz zmienić lokalizację obiektu, przesuń marker w dowolne miejsce na mapie</span></h3>
+                            <div class="map_wrap">
+                                <div class="map_go"></div>
+                            </div>
+                        </div>
+                        <div id="tabkomentarze">
+                            <!--<a href="#" class="addicons">Edytuj opis obiektu</a>-->
+                            <div class="comments_wrap">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="finalisation-buttons">
+                    <button type="button" class="return">Anuluj</button>
+                    <button type="submit" class="button btn-pay-redirect" data-redirect="/Payment?objectId=@ViewBag.Id#promotions">Zapisz i <span class="important">opłać</span></button>
+                    <button type="submit" class="button">Zapisz zmiany</button>
+                    
+                    <p class="clearfix"></p>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+@Html.Action("Right", "Sidebar")
+
+<script type="text/javascript">
+    var OBJECT_ID = @ViewBag.id;
+
+    function refreshTipsy() {
+        $('.option_icon[rel=tipsy]').tipsy({ gravity: 's', offset: 0, fade: false });
+    }
+
+    function Editors() {
+        var editors = [];
+        var $srcTextarea;
+        var editor;
+        this.CreateEditor = function ($textarea) {
+            if(editor)
+                return;
+
+            $srcTextarea = $textarea; 
+            //var editor = new nicEditor({
+            //    fullPanel: true,
+            //    iconsPath: "/Images/nicEditorIcons.gif"
+            //}).panelInstance($textarea.attr('id'), { hasPanel: true });
+            //tinymce.init({
+            //    selector: "textarea#" + $textarea.attr('id'),
+            //    theme: "modern",
+            //    width: 623,
+            //    height: 300,
+            //    menu : {
+            //        file   : {title : 'File'  , items : 'newdocument'},
+            //        edit   : {title : 'Edit'  , items : 'undo redo | cut copy paste pastetext | selectall'},
+            //        format : {title : 'Format', items : 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+            //        table  : {title : 'Table' , items : 'inserttable tableprops deletetable | cell row column'},
+            //    },
+            //    toolbar: "insertfile undo redo | styleselect | bold italic underline| alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor", 
+            //}); 
+
+            //editor = tinymce.editors.description_extended;
+            //editors.push({ editor: tinymce.get($textarea.attr('id')), id: $textarea.attr('id') });
+        }
+
+        this.RemoveEditors = function () {
+            //editors.forEach(function (editor) {
+                //editor.editor.removeInstance(editor.id);
+            //});
+
+        }
+
+        this.Save = function () {
+            //if(!editor){
+            //    editor = tinymce.editors[0];
+            //}
+            ////editors.forEach(function (e) {
+            //    //var instance = e.editor.instanceById(e.id);
+            //    //if(instance)
+            //    //    instance.saveContent();
+            ////});
+            //console.log(editor.getContent());
+            //$srcTextarea.val(editor.getContent());
+        }
+
+        this.Load = function () {
+            ////editors.forEach(function (e) {
+            //    //e.editor.setContent($('#' + e.id).val());
+            //    //var instance = e.editor.instanceById(e.id);
+            //    //if(instance)
+            //    //    instance.setContent($('#' + e.id).val());
+            ////});
+            //if(!editor){
+            //    editor = tinymce.editors[0];
+            //}
+
+            //editor.setContent($srcTextarea.val());
+        }
+    }
+
+    var editors = new Editors();
+
+    var textEditorInited = false;
+    function InitTextEditor(){
+        if(textEditorInited)
+            return;
+
+        tinymce.baseURL = "/Scripts/tinymce/";
+
+        tinymce.init({
+            selector: "textarea#description_extended",
+            theme: "modern",
+            width: 623,
+            height: 300,
+            plugins: "textcolor",
+            language: "pl",
+            menu: {
+                file: { title: 'File', items: 'newdocument' },
+                edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
+                format: { title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat' },
+                table: { title: 'Table', items: 'inserttable tableprops deletetable | cell row column' },
+            },
+            toolbar: "styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",
+        });
+
+        textEditorInited = true;
+    }
+
+
+    $(function () {
+        $("select").selectbox();
+        
+        $('#tab-container').easytabs({ animationSpeed: 100 });
+
+        $("input.numeric").numeric({ decimal: ',' });
+
+        $('.txt_extended').css({ opacity: 0 });
+
+        //Init editor only when tab with the editor is active
+        $('#tab-container').bind('easytabs:after', function (e, $tab, $container) {
+            var $textarea = $container.find('.txt_extended');
+
+            if ($textarea.length == 0)
+                return;
+            
+            InitTextEditor();
+        });
+
+        if($('#tab-container .active .txt_extended').length > 0){
+            InitTextEditor();
+        }
+
+        ObjectCreationInit(OBJECT_ID);
+
+        $('[data-redirect]').on('click', function(){
+            window.REDIRECT_URL = $(this).data('redirect');
+        });
+
+        if(User.Subscribed){
+            $('.btn-pay-redirect').remove();
+        }
+    });
+</script>
+@Scripts.Render("~/Scripts/Core/ObjectCreation.js")

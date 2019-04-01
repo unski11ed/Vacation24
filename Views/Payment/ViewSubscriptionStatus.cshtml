@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+
+@model Wczasy24_MVC4.Services.SubscriptionService
+
+<div class="left myacc">
+    <text>Abonament</text>
+    @if (Model == null || !Model.IsActive)
+    {
+        <span class="red">nieopłacony</span>
+    }
+    else
+    {
+        var days = (int)Math.Ceiling((Model.Expiriation - DateTime.Now).TotalDays);
+        
+        <span class="green">opłacony</span><br><text>DO KOŃCA: </text><span class="@(days <= 14 ? "red" : "green")">@days DNI</span>
+    }
+</div>
+<div class="clearfix"></div>
+<a href="#" class="addtime payment-modal-activator"  data-handler="SubscriptionService" data-additional="{ 'userId' : '@ViewBag.userId' }">Przedłuż abonament</a>

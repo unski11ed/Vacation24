@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Linki administratora</h2>
+
+<ul class="admin_menu">
+    <li>
+        <a href="@Url.Action("List", "Profile")">Lista użytkowników</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Orders", "Payment")">Lista zamówień</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Edit", "Payment")">Edycja cen usług</a>
+    </li>
+    <li>
+        <a href="@Url.Action("Create", "News")">Stwórz aktualność</a>
+    </li>
+</ul>

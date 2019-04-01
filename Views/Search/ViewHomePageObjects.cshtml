@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+
+@model List<Wczasy24_MVC4.Models.DTO.PromotedObject>
+@using Vacation24.Core.Configuration.Images;
+
+<ul class="itemgrid">
+    @foreach (var promotedObject in Model)
+    {
+        var place = promotedObject.Object;
+        
+        <li @(promotedObject.Promoted ? "class=promo" : "")>
+            <a href="@Url.Action("View", "Object", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })">
+                <img src="@Thumbnail.UriFromPhoto(Thumbnail.Medium, place.MainPhoto)" />
+                <h4>@place.Name</h4>
+                <span>@place.City</span>
+            </a>
+        </li>
+    }
+</ul>

@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@Scripts.Render("~/Scripts/payment.js")
+
+<div class="main left">
+    <section class="admin row">
+        <h2 class="sub">Moje konto<br /><span>Panel Właściciela Obiektu</span></h2>
+		<div class="staticbox">
+            <a class="switchpanel" href="@Url.Action("Index", "Profile")">Panel zarządzania kontem</a>
+		</div>
+        <div class="staticbox">
+            @Html.Action("ViewSubscriptionAlert", "Payment")
+            <h3>Moje obiekty</h3>
+            <div class="objects-wrap">
+                <div class="objects-list">
+                    @Html.Action("GetUserObjects", new { page = 0 })
+                </div>
+            </div>
+            @if (ViewBag.IsSubscribed)
+            {
+                <a href="#" class="add_place addnewobject">Dodaj nowy obiekt</a>
+            }
+        </div>
+        <div class="staticbox">
+            <h3>Moje konto</h3>
+			<a href="@Url.Action("Edit", "Profile")" class="editbox">Moje dane</a>
+            @Html.Action("ViewSubscriptionStatus", "Payment")
+        </div>
+        <div class="staticbox">
+            <h3>Statystyki konta</h3>
+            <div class="objectstats">
+                <div class="objectstatsinfo">
+                    <p>Ilość unikalnych odwiedzin: <span class="blue">@ViewBag.TotalUniqueViews</span></p>
+                    <p>Całkowita ilość odwiedzin: <span class="blue">@ViewBag.TotalViews</span></p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+@Html.Action("Right", "Sidebar")
+
+<script>
+    $(function () {
+        var TOTAL_PAGES = @(ViewBag.TotalPages);
+
+        var $container = $(".objects-wrap");
+
+        if(TOTAL_PAGES > 1){
+            Paginator($container, function(page){
+                $.get("/Owner/GetUserObjects/?page=" + (page - 1), function(result){
+                    var $list = $container.find(".objects-list");
+
+                    $list.html(result);
+
+                    Payments.RegisterButtonHandlers();
+                });
+            }, TOTAL_PAGES);
+        }
+
+        Payments.RegisterButtonHandlers();
+
+        $('.add_place').click(function () {
+            CreateProjectWindow();
+
+            return false;
+        });
+    });
+</script>
+
+    

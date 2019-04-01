@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+}
+
+@model System.Collections.Generic.List<Wczasy24_MVC4.Models.LoggedUserIp>
+
+<table>
+    <thead>
+        <tr>
+            <th>Adres IP</th>
+            <th>Czas logowania</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ip in Model)
+        {
+            <tr>
+                <td>
+                    @ip.Ip
+                </td>
+                <td>
+                    @ip.Logged
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

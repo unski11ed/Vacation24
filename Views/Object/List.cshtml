@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "List";
+}
+@using System;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@using Vacation24.Models;
+@using Vacation24.Core.ExtensionMethods;
+@using Vacation24.Core.Configuration.Images;
+
+@{
+    Func<Microsoft.AspNetCore.Html.IHtmlContent> SearchOptions =
+        @<div class="paginate">
+            <div class="row results">
+                <span class="left">Znaleziono ofert: <strong>@ViewBag.Count</strong></span>
+                <div class="right pages">
+                    @Html.PagedListPager(
+                        (IPagedList)ViewBag.Places,
+                        page => Url.Action("List", new RouteValueDictionary(ViewBag.CurrentRouteValues) { { "page", page } }),
+                        PagedListRenderOptions.Classic
+                    )
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="row sort">
+                <div class="left list-count-options">
+                    <strong>Ilość ofert na stronie: </strong>
+                    <a href="#" data-count="20">20</a>
+                    <a href="#" data-count="50">50</a>
+                    <a href="#" data-count="100">100</a>
+                </div>
+                <div class="right">
+                    <span class="left"><strong>Sortuj:</strong></span>
+                    <form class="sortbox right">
+                        <select class="sortfield" name="" id="sort_crit">
+                            <option value="city">Sortuj po miejscowości</option>
+                            <option selected value="popular">Sortuj wg. popularności</option>
+                            <option value="alphabet">Sortuj alfabetycznie</option>
+                        </select>
+                        <select class="sortfield" name="" id="sort_price">
+                            <option selected value="asc">Cena rosnąco</option>
+                            <option value="desc">Cena malejąco</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>;
+}
+
+<div class="main right">
+    <section class="objectlist row">
+        @SearchOptions()
+        <ul class="itemlist">
+            @foreach (var promotedObject in ViewBag.Places)
+            {
+                var place = promotedObject.Object;
+                
+                <li @(promotedObject.Promoted ? "class=promolist" : "")>
+                    <a href="@Url.Action("View", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })" class="left"><img src="@Thumbnail.UriFromPhoto(Thumbnail.Medium, place.MainPhoto)" /></a>
+                    <div class="left itemdesc">
+                        <a href="@Url.Action("View", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name)})" class="">
+                            <h4 class="h_name">@place.Name</h4>
+                        </a>
+                        <p>@place.ShortDescription</p>
+
+                        <div class="tools">
+                            <a class="tblank" href="@Url.Action("View", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })" target="_blank">Otwórz w nowej karcie</a>
+                            <a class="addtoclip" href="#" onclick="stash.Add(@place.Id); return false;">Dodaj do schowka</a>
+                        </div>
+                    </div>
+                    <div class="right iteminfo">
+                        <span class="price">od @place.MinimumPrice PLN</span>
+                        <div class="admin-tools">
+                            @if (ViewBag.IsAdmin)
+                            {
+                                <a class="object_edit" href="@Url.Action("Edit", "Object", new { id = place.Id })">Edytuj</a>
+                                <a class="object_delete" href="@Url.Action("Delete", "Object", new { id = place.Id })">Usuń</a>
+                            }
+                        </div>
+                        <a class="place place-city" href="@Url.Action("List", "Object", new { city=place.City})"><strong>@place.City</strong></a><br />
+                        <a class="place place-voiv" href="@Url.Action("List", "Object", new { voiv=place.Voivoidship})">@place.Voivoidship</a>
+                    </div>
+                    <div class="clearfix"></div>
+                </li>
+            }
+        </ul>
+       @SearchOptions()
+        <script>
+            $(function () {
+                $(".sortfield").each(function () {
+                    var _this = $(this);
+
+                    if (QueryString[_this.attr('id')]) {
+                        $(this).val(QueryString[_this.attr('id')]);
+                    }
+                });
+
+                $("#popular, #sort_crit, #sort_price").selectbox();
+
+                $(".sortfield").change(function () {
+                    var $selected = $(this).find(":selected");
+                    var $this = $(this);
+                    window.location.href = updateQueryStringParameter(document.URL, $(this).attr('id'), $(this).val());
+                });
+
+                $(".object_delete").click(function () {
+                    var name = $(this).closest('li')
+                                      .find('.h_name')
+                                      .text();
+
+                    var $anchor = $(this);
+
+                    if (confirm("Czy napewno chcesz usunąć obiekt " + name + ". Tej czynności nie będzie dało się odwrócić!")) {
+                        $.get($anchor.attr('href'), function (dataObject) {
+                            if (dataObject.Status == ResultType.Success) {
+                                $anchor.closest('li').remove();
+                            }
+                        });
+                    }
+
+                    return false;
+                });
+            });
+        </script>
+    </section>
+</div>
+<div class="sidebar left">
+    <div class="bluebox">
+        <h3>Wyniki wyszukiwania dla:</h3>
+        @foreach (var filter in ViewBag.Filters)
+        {
+            <div class="filter" data-query-param="@filter.UrlParam">
+                <h4 class="search"><a href="#" class="delete"></a><span>@(filter.Name):</span> @filter.Value</h4>
+                
+            </div>
+        }
+
+        @if (ViewBag.Filters.Count == 0)
+        {
+            <div class="filter">
+                <h4 class="search">Wszystkie obiekty</h4>
+            </div>
+        }
+        <script>
+            $(".filter .delete").click(function () {
+                var query = window.location.href;
+                var query_param = $(this).closest('.filter').data('queryParam');
+
+                var begin_index = query.indexOf(query_param);
+                var end_index = query.indexOf('&', begin_index);
+                end_index = end_index < 0 ? query.length : end_index + 1;
+
+                window.location = query.replace(query.substring(begin_index, end_index), "");
+
+                return false;
+            });
+        </script>
+    </div>
+    <div class="greybox popular">
+        <h3>Najpopularniejsze miejscowości</h3>
+        <ul>
+        </ul>
+
+        <script type="text/javascript">
+            var voiv = QueryString.voiv ? QueryString.voiv : "";
+
+            var $container = $(".greybox.popular ul");
+
+            ajax("/Search/GetCitiesInVoivoidshipWithCount", { Name: decodeURIComponent(voiv) }, function (data) {
+                data.cities.forEach(function (city) {
+                    $container.append("<li><a href='/Object/List?city=" + encodeURIComponent(city.City) + (voiv ? "&voiv=" + voiv : "") + "'><span class='city_name'>" + city.City + "</span><span class='places_count'>(" + city.PlacesCount + ")</span>" + "</li></li>");
+                });
+            });
+        </script>
+    </div>
+    <div class="greybox popular">
+        <h3>Opcje przeglądania</h3>
+        @Html.Action("SearchForm", "Search")
+    </div>
+    <a href="/Static/AtrakcjeRegionow" class="mainatrakcje">Atrakcje regionów</a>
+
+    @Html.Action("ViewSpecialOffersBox", "Search", new { prefferedVoivoidship = Request.QueryString["voiv"], prefferedCity = Request.QueryString["city"] })
+
+</div>

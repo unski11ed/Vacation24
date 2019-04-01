@@ -1,0 +1,37 @@
+@{
+    Layout = null;
+}
+@using Vacation24.Core.Configuration.Images
+
+<h3 class="single">Oferty specjalne</h3>
+<div class="specialoffers">
+    @* @foreach (var place in ViewBag.Places)
+    {
+        <a href="@Url.Action("View", "Object", new {id = 2})" class="specialbox">
+            <img src="@Thumbnail.Uri(Thumbnail.Large, (place.MainPhoto != null ? place.MainPhoto.Filename : null))" />
+            <span>@place.Name</span>
+        </a>
+    } *@
+</div>
+
+<script>
+    var images = [
+        @foreach (var place in ViewBag.Places)
+        {
+            @: {
+                @: src: '@Thumbnail.UriFromPhoto(Thumbnail.Large, place.MainPhoto)',
+                @: url: '@Url.Action("View", "Object", new { id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })',
+                @: name: '@place.Name',
+                @: city: '@place.City'
+            @: },
+        }
+    ];
+
+    $('.specialoffers').slider({
+        width: 260,         //szeroko�� w px
+        height: 230,        //wysoko�� w px
+        images: images,
+        time: 5000,         //czas automatycznej zmiany w milisekundach 
+        direction: 'right'  //kierunek automatycznego przesuwania
+    });
+</script>

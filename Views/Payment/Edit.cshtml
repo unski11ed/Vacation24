@@ -1,0 +1,297 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edycja usług</h2>
+
+<div class="staticbox">
+<section>
+    <h3>Abonament</h3>
+
+    <a href="javascript:void(0)" class="subscription-create">Dodaj</a>
+
+    <table class="subscriptions-edit-table price_list">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Czas (dni)</th>
+                <th>Cena</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscription in ViewBag.Subscriptions)
+            {
+                <tr class="subscription-entry">
+                    <td>
+                        <input type="hidden" name="Id" value="@subscription.Id" />
+                        <input type="hidden" name="HandlerName" value="@subscription.HandlerName" />
+
+                        <input type="text" name="Name" value="@subscription.Name" placeholder="..." />
+                    </td>
+                    <td>
+                        <input class="validation-integer" type="number" name="Days" value="@subscription.Days" />
+                    </td>
+                    <td>
+                        <input class="validation-decimal" type="text" name="Price" value="@subscription.Price" placeholder="..." />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="save-entry">Zapisz</a><br />
+                        <a href="javascript:void(0)" class="remove-entry">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+</div>
+<div class="staticbox">
+<section>
+    <h3>Promocje</h3>
+
+    <a href="javascript:void(0)" class="promotion-create">Dodaj</a>
+
+    <table class="promotions-edit-table price_list">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Typ</th>
+                <th>Czas (dni)</th>
+                <th>Cena</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var subscription in ViewBag.Promotions)
+            {
+                <tr class="promotion-entry">
+                    <td>
+                        <input type="hidden" name="Id" value="@subscription.Id" />
+
+                        <input class="validation-text" type="text" name="Name" value="@subscription.Name" placeholder="..." />
+                    </td>
+                    <td>
+                        <select class="validation-text" name="HandlerName" >
+                            @foreach (var promotionHandler in ViewBag.PromotionsHandlers)
+                            {
+                                <option value="@promotionHandler" @(promotionHandler == subscription.HandlerName ? "selected" : "")>@promotionHandler</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input class="validation-integer" type="number" name="Days" value="@subscription.Days" />
+                    </td>
+                    <td>
+                        <input class="validation-decimal" type="text" name="Price" value="@subscription.Price" placeholder="..." />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="save-entry">Zapisz</a><br />
+                        <a href="javascript:void(0)" class="remove-entry">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>
+</div>
+<!--AJAX Templates-->
+<script id="subscriptionEditElement" type="text/x-jsrender">
+    <tr class="subscription-entry">
+        <td>
+            <input type="hidden" name="Id" value="" />
+            <input type="hidden" name="HandlerName" value="SubscriptionService" />
+
+            <input class="validation-text"  type="text" name="Name" value="" placeholder="..." />
+        </td>
+        <td>
+            <input class="validation-integer" type="number" name="Days" value="" />
+        </td>
+        <td>
+            <input class="validation-decimal" type="text" name="Price" value="" placeholder="..." />
+        </td>
+        <td>
+            <a href="javascript:void(0)" class="save-entry">Zapisz</a><br />
+            <a href="javascript:void(0)" class="remove-entry">Usuń</a>
+        </td>
+    </tr>
+</script>
+
+<script id="promotionEditElement" type="text/x-jsrender">
+    <tr class="promotion-entry">
+        <td>
+            <input type="hidden" name="Id" value="" />
+
+            <input class="validation-text" type="text" name="Name" value="" placeholder="..." />
+        </td>
+        <td>
+            <select class="validation-text" name="HandlerName">
+                <option value="" disabled selected>Wybierz...</option>
+                @foreach (var promotionHandler in ViewBag.PromotionsHandlers)
+                {
+                    <option value="promotionHandler">@promotionHandler</option>
+                }
+            </select>
+        </td>
+
+        <td>
+            <input class="validation-integer" type="number" name="Days" value="" />
+        </td>
+        <td>
+            <input class="validation-decimal" type="text" name="Price" value="" placeholder="..." />
+        </td>
+        <td>
+            <a href="javascript:void(0)" class="save-entry">Zapisz</a><br />
+            <a href="javascript:void(0)" class="remove-entry">Usuń</a>
+        </td>
+    </tr>
+</script>
+
+
+<!--Logic-->
+<script type="text/javascript">
+    function entryToObject($trEntry) {
+        var output = {};
+
+        $trEntry.find('input, select').each(function () {
+            var key = $(this).attr('name');
+            var val = $(this).val();
+
+            if ($(this).hasClass('validation-integer'))
+                val = parseInt(val);
+
+            if ($(this).hasClass('validation-decimal'))
+                val = parseFloat(val.replace(',', '.'));
+
+            output[key] = val;
+        });
+
+        return output;
+    }
+
+
+    function assignEventHandlers($trEntry) {
+        //Assign Numeric
+        $trEntry.find("input.validation-decimal")
+                .numeric({ decimal: ',' });
+
+        $trEntry.find(".save-entry").click(function () {
+            var $trEntry = $(this).closest('tr');
+            if (validateEntry($trEntry)) {
+                var dataObject = entryToObject($trEntry);
+
+                ajax("/Payment/Update", dataObject, function (data) {
+                    if (data.Status == ResultType.Success) {
+                        Message.Success("Pomyślnie uaktualniono wpis.");
+
+                        //Update Id if created
+                        $trEntry.find('input[name=Id]').val(data.Message);
+                    } else {
+                        Message.Error(data.Message);
+                    }
+                }, function () {
+                    Message.Error("Nie udało się przetworzyć żadania.");
+                });
+            }
+        });
+
+        $trEntry.find(".remove-entry").click(function () {
+            if (!confirm("Napewno usunąć usługę?"))
+                return;
+
+            var $trEntry = $(this).closest('tr');
+
+            var Id = $trEntry.find('input[name=Id]').val();
+
+            if (Id) {
+                ajax("/Payment/Delete", { Id: parseInt(Id) }, function (data) {
+                    if (data.Status == ResultType.Success) {
+                        $trEntry.remove();
+                    } else {
+                        Message.Error(data.Message);
+                    }
+                }, function () {
+                    Message.Error("Nie udało się przetworzyć żądania.");
+                });
+            } else {
+                $trEntry.remove();
+            }
+        });
+    }
+
+    function validateEntry($entryTr) {
+        var showErrorMessage = function ($input, message) {
+            var $td = $input.parent();
+            var $table = $input.closest('table');
+
+            var tdIndex = $td.index();
+
+            var fieldName = $table.find('th')
+                                  .eq(tdIndex)
+                                  .text();
+
+            alert("Pole " + fieldName + " " + message);
+        };
+
+        var result = true;
+
+        $entryTr.find("input, select").each(function () {
+            var $input = $(this);
+
+            if ($input.is(':hidden') || !result)
+                return;
+
+            if (!$input.val()) {
+                showErrorMessage($input, "nie może być puste");
+                result = false;
+            }
+
+            if ($input.hasClass('validation-decimal')) {
+                if (!parseFloat($input.val().replace(',', '.'))) {
+                    showErrorMessage($input, "powinno być większe od zera");
+                    result = false;
+                }
+            }
+
+            if ($input.hasClass('validation-integer')) {
+                if (!parseInt($input.val())) {
+                    showErrorMessage($input, "powinno być większe od zera");
+                    result = false;
+                }
+            }
+        });
+
+        return result;
+    }
+
+    //=================BOOTSTRAP=====================
+    $(function () {
+        $(".subscription-entry, .promotion-entry").each(function () {
+            assignEventHandlers($(this));
+        });
+
+        $('.promotion-create').click(function () {
+            var $row = $($.templates("#promotionEditElement").render());
+
+            $('table.promotions-edit-table tbody').append($row);
+
+            assignEventHandlers($row);
+
+            $row.find('input[type=text]')
+                .first()
+                .focus();
+        });
+
+        $('.subscription-create').click(function () {
+            var $row = $($.templates("#subscriptionEditElement").render());
+
+            $('table.subscriptions-edit-table tbody').append($row);
+
+            assignEventHandlers($row);
+
+            $row.find('input[type=text]')
+                .first()
+                .focus();
+        });
+    });
+
+</script>

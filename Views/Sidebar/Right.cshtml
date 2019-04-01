@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+<div class="sidebar right">
+    @if (ViewBag.IsOwner)
+    {
+        <a href="#" class="add_place mainadd">Dodaj obiekt</a>
+    }
+
+    <div class="greybox popular">
+        <h3>Popularne miejscowości</h3>
+        <select name="popular_side" id="popular">
+            <option data-type="Region" value="morze">Nad morzem</option>
+            <option data-type="Region" value="gory">W górach</option>
+            <option data-type="Region" value="mazury">Mazury</option>
+            <option data-type="Region" value="jezioro">Jeziora</option>
+            <option data-type="Option" value="EventsAccepted">Oferty okolicznościowe</option>
+            <option data-type="Option" value="SeniorFriendly">Dla seniorów</option>
+        </select>
+        <ul class="popular_list"></ul>
+        <script>
+            $("#popular").selectbox();
+
+            function fillLinks() {
+                var $select = $('.popular #popular');
+                var $selectedOption = $select.find(":selected");
+
+                var type = $selectedOption.data('type'),
+                    value = $select.val();
+
+                ajax("/Search/GetPopularCitiesBy" + type, {
+                    Criteria: value
+                }, function (data) {
+                    var $list = $(".popular ul.popular_list");
+
+                    $list.empty();
+                    data.Cities.forEach(function (city) {
+                        var markup = "<li><a href='/Object/List?city={{city}}{{option}}'>{{city}}</a></li>"
+                        $list.empty().append(markup.replace(/{{city}}/g, city)
+                                                   .replace(/{{option}}/g, type == 'Option' ? '&option=' + value : ''));
+                    });
+                }, function () {
+                    Message.Error("Nie udało się pobrać popularnych miejscowości.");
+                })
+            }
+
+            fillLinks();
+
+            $("#popular").change(function () {
+                fillLinks();
+            });
+        </script>
+    </div>
+    <a href="/Static/AtrakcjeRegionow" class="mainatrakcje">Atrakcje regionów</a>
+    @Html.Action("ViewSpecialOffersBox", "Search")
+    @Html.Action("NewsBox", "News")
+</div>

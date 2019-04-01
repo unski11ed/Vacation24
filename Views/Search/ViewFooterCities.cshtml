@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+}
+
+@model Dictionary<string, List<string>>
+
+@functions{
+    string PrintColumns(List<string> data){
+        var output = "<ul class=\"col2\">";
+        
+        var counter = 0;
+        foreach (var city in data)
+        {
+            output += "<li><a href=\"" + Url.Action("List", "Object", new { city = city }) + "\">" + city + "</a></li>";
+            counter++;
+            if (counter % 6 == 0)
+            {
+                output += "</ul>";
+                output += "<ul class=\"col2\">";
+            }
+        }
+        
+        return output;
+    }
+
+}
+<div class="col3 shortlinks">
+    <h5>Noclegi nad morzem</h5>
+    @Html.Raw(PrintColumns(Model["morze"]))
+</div>
+<div class="col3 shortlinks">
+    <h5>Noclegi nad jeziorem</h5>
+    @Html.Raw(PrintColumns(Model["jezioro"]))
+</div>
+<div class="col3 shortlinks">
+    <h5>Noclegi w górach</h5>
+    @Html.Raw(PrintColumns(Model["gory"]))
+</div>
+

@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Aktualności";
+}
+
+<div class="main left">
+    <h2>Aktualności</h2>
+
+    @if (ViewBag.IsEditable)
+    {
+        <a class="newscreate" href="@Url.Action("Create")">Stwórz</a>
+    }
+
+    <div class="staticbox">
+        <ul class="newslist">
+            @foreach (var entry in ViewBag.List)
+            {
+                <li>
+                    @if (ViewBag.IsEditable)
+                    {
+                        <a class="newsaction" href="@Url.Action("Edit", new { id= entry.Id })">Edytuj</a>
+                        <a class="newsaction" href="@Url.Action("Delete", new {id = entry.Id})" onclick="confirm('Na pewno usunąć wpis?')">Usuń</a>
+				        <div class="clearfix"></div>
+                    }
+
+                    <a href="@Url.Action("View", new { id = entry.Id, Title = Funcs.SanitizeForUrl(entry.Title) })">@entry.Title</a>
+			        <span class="timestamp">@entry.Created.ToString("dd'.'MM'.'yyyy")</span>
+                    <p>@entry.ShortContent</p>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+@Html.Action("Right", "Sidebar")

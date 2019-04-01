@@ -1,0 +1,15 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="greybox popular">
+    <h3>Najpopularniejsze miejscowości</h3>
+    <ul>
+        @foreach (var city in ViewBag.MostPopularCities)
+        {
+            <li>
+                <a href="@Url.Action("List", "Object", new {city = city.City})"><span class="city_name">@city.City</span><span class="places_count">(@city.PlacesCount)</span></a>
+            </li>
+        }
+    </ul>
+</div>

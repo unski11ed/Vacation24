@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Cennik";
+}
+
+<h2>Cennik</h2>
+<!---       Abonament       -->
+<div class="pricing-table">
+    <h3>Abonament <a href="#"></a></h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Czas trwania
+                    </th>
+                    <th>
+                        Cena
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subscribtion in ViewBag.subscribtions)
+                {
+                    <tr>
+                        <td><span>@subscribtion.Days</span> dni</td>
+                        <td>@String.Format("{0:c}", subscribtion.Price)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!---       Promocja na stronie głównej       -->
+<div class="pricing-table">
+    <h3>Wyszczególnienie na stronie głównej <a href="#"></a></h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Czas trwania
+                    </th>
+                    <th>
+                        Cena
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var homePromotion in ViewBag.homePromotions)
+            {
+                <tr>
+                    <td><span>@homePromotion.Days</span> dni</td>
+                    <td>@String.Format("{0:c}", homePromotion.Price)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!---       Promocja w wynikach wyszukiwania       -->
+<div class="pricing-table">
+    <h3>Wyszczególnienie w wynikach wyszukiwania <a href="#"></a></h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Czas trwania
+                    </th>
+                    <th>
+                        Cena
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var searchPromotion in ViewBag.searchPromotions)
+            {
+                <tr>
+                    <td><span>@searchPromotion.Days</span> dni</td>
+                    <td>@String.Format("{0:c}", searchPromotion.Price)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!---       Promocja w panelu bocznym      -->
+<div class="pricing-table">
+    <h3>Wyszczególnienie w panelu bocznym <a href="#"></a></h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Czas trwania
+                    </th>
+                    <th>
+                        Cena
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var sidePromotion in ViewBag.sidePromotions)
+            {
+                <tr>
+                    <td><span>@sidePromotion.Days</span> dni</td>
+                    <td>@String.Format("{0:c}", sidePromotion.Price)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="greybox popular">
+    <h3>Popularne miejscowości</h3>
+    <select name="popular_side" id="popular">
+        <option data-type="Region" value="morze">Nad morzem</option>
+        <option data-type="Region" value="gory">W górach</option>
+        <option data-type="Region" value="mazury">Mazury</option>
+        <option data-type="Region" value="jezioro">Jeziora</option>
+        <option data-type="Option" value="EventsAccepted">Oferty okolicznościowe</option>
+        <option data-type="Option" value="SeniorFriendly">Dla seniorów</option>
+    </select>
+
+    <ul>
+    </ul>
+
+    <script>
+        function fillLinks() {
+            var $select = $('#popular');
+            var $selectedOption = $select.find(":selected");
+
+            var type = $selectedOption.data('type'),
+                value = $select.val();
+
+            ajax("/Search/GetPopularCitiesBy" + type, {
+                Criteria: value
+            }, function (data) {
+                data.Cities.forEach(function (city) {
+                    var markup = "<li><a href='/Object/List?city={{city}}{{option}}'>{{city}}</a></li>"
+                    $(".popular ul").append(markup.replace(/{{city}}/g, city)
+                                                  .replace(/{{option}}/g, type == 'Option' ? '&option=' + value : '');
+                });
+            }, function () {
+                Message.Error("Nie udało się pobrać popularnych miejscowości.");
+            })
+        }
+    </script>
+</div>

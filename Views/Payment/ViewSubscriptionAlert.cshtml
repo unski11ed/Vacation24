@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+
+@model Wczasy24_MVC4.Services.SubscriptionService
+
+@if (Model == null || !Model.IsActive)
+{
+    <div class="msgbox info">Abonament nieaktywny. <a href="#" class="payment-modal-activator" data-handler="SubscriptionService" data-additional="{ 'userId' : '@ViewBag.userId' }">Aktywuj abonament</a></div>
+}
+else
+{
+    var days = (int)Math.Ceiling((Model.Expiriation - DateTime.Now).TotalDays);
+    if (days <= 14)
+    {
+        <div class="msgbox error">Pozostało <span>@days dni</span> do końca abonamentu <a href="#" class="payment-modal-activator" data-handler="SubscriptionService" data-additional="{ 'userId' : '@ViewBag.userId' }">Przedłuż abonament</a></div>
+    }
+}
+

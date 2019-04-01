@@ -1,0 +1,13 @@
+﻿@{
+    Layout = null;
+}
+
+@using Vacation24.Core.Configuration.Images
+
+<h2>Najnowsze ogłoszenia</h2>
+<ul class="itemgrid">
+    @foreach (var place in ViewBag.Places)
+    {
+        <li><a href="@Url.Action("View", "Object", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })"><img src="@Thumbnail.UriFromPhoto(Thumbnail.Medium, place.MainPhoto)" /><h4>@place.Name</h4><span>@place.City</span></a></li>
+    }
+</ul>

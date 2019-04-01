@@ -1,0 +1,70 @@
+﻿@model Wczasy24_MVC4.Models.News
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edycja aktualności</h2>
+
+<div class="staticbox create_news newsedit">
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="editor-label">
+            <label for="Title">Tytuł aktualności</label>
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Title)
+            @Html.ValidationMessageFor(model => model.Title)
+        </div>
+
+        <div class="editor-label">
+            <label for="Content">Treść aktualności</label>
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Content)
+            @Html.ValidationMessageFor(model => model.Content)
+        </div>
+
+        <p>
+            <button type="submit">Aktualizuj</button>
+        </p>
+    </fieldset>
+}
+
+<div>
+    @Html.ActionLink("Powrót do listy", "Index")
+</div>
+</div>
+
+<script>
+    $(function () {
+        tinymce.baseURL = "/Scripts/tinymce/";
+
+        var editor = tinymce.init({
+            selector: "textarea.multi-line",
+            theme: "modern",
+            width: 895,
+            height: 500,
+            plugins: "textcolor",
+            language: "pl",
+            menu: {
+                file: { title: 'File', items: 'newdocument' },
+                edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall' },
+                format: { title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat' },
+                table: { title: 'Table', items: 'inserttable tableprops deletetable | cell row column' },
+            },
+            toolbar: "styleselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",
+        });
+    });
+    
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

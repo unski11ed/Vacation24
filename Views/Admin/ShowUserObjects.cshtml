@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Promocje użytkownika @ViewBag.Profile.Name</title>
+    @Html.Partial("~/Views/Shared/_ModalTemplates.cshtml")
+    @Html.Partial("~/Views/Shared/_ScriptsData.cshtml")
+
+    @Styles.Render("~/bundles/main_styles")
+    @Scripts.Render("~/bundles/main_scripts")
+    <script src="~/Scripts/payment.js"></script>
+</head>
+<body class="raw">
+    <div id="wnd_modal"></div>
+    <div class="admin" style="max-width: 640px; margin: 10px auto">
+        <h3>Obiekty użytkownika @ViewBag.Profile.Name</h3> 
+        <div class="user-objects-list">
+            @Html.Action("GetUserObjects", "Owner", new { userId = @ViewBag.Profile.UserId })
+        </div>
+        <div class="user-objects-paginator"></div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            var uid = @ViewBag.Profile.UserId;
+            Paginator($('.user-objects-paginator'), function(page){
+                $.get("/Owner/GetUserObjects/?page=" + (page - 1) + "&userId=" + uid, function(result){
+                    var $list = $(".user-objects-list");
+
+                    $list.html(result);
+
+                    Payments.RegisterButtonHandlers();
+                });
+            }, @ViewBag.Count);
+
+            Payments.RegisterButtonHandlers();
+        });
+</script>
+</body>
+</html>

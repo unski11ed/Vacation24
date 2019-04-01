@@ -1,0 +1,13 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="sidebar left">
+    @Html.Action("ViewMostPopularCities", "Search")
+    <div class="greybox popular">
+        <h3>Opcje przeglądania</h3>
+        @Html.Action("SearchForm", "Search")
+    </div>
+    <a href="/Static/AtrakcjeRegionow" class="mainatrakcje">Atrakcje regionów</a>
+
+</div>

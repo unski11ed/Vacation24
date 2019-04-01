@@ -1,0 +1,31 @@
+﻿@model List<Wczasy24_MVC4.Models.Favorite>
+
+@{
+    Layout = null;
+}
+
+@using Vacation24.Core.Configuration.Images
+
+<h3>Moje ulubione obiekty</h3>
+<ul class="favobjects">
+    @foreach (var favorite in @Model)
+    {
+        <li data-id="@favorite.Id" class="favelement"><a href="/Object/View/?id=@favorite.Place.Id" target="_blank"><img width="30" height="26" src="@Thumbnail.UriFromPhoto(Thumbnail.Small, @favorite.Place.MainPhoto)" /><span>@favorite.Place.Name</span></a><span class="favobjectprice">@favorite.Place.MinimumPrice pln</span><span class="favobjectremove" title="Usuń">Usuń</span></li>
+    }
+</ul>
+<a href="@Url.Action("List", "Object")" class="addfavobject">Dodaj więcej ulubionych obiektów</a>
+<script>
+    $('.favelement').find('.favobjectremove').click(function () {
+        if (confirm("Napewno usunąć obiekt z ulubionych?")) {
+            var $parent = $(this).closest('.favelement');
+            var id = $parent.data('id');
+
+            ajax("/Favorites/Delete", { Id: id }, function (data) {
+                if (data.Status == ResultType.Success) {
+                    $parent.remove();
+                }
+            });
+        }
+        return false;
+    });
+</script>

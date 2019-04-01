@@ -1,0 +1,260 @@
+﻿@{
+    ViewBag.Title = ViewBag.Place.Name;
+}
+@using Vacation24.Core.Configuration.Images
+
+@section OpenGraph{
+    <meta property="og:image" content="@(ViewBag.Domain + (ViewBag.MainPhoto != null ? Thumbnail.UriFromPhoto(Thumbnail.Mega, ViewBag.MainPhoto) : Thumbnail.Uri(Thumbnail.Mega, null)))" />
+    <meta property="og:title" content="Wczasy24 - @ViewBag.Place.Name" />
+    <meta property="og:url" content="@Url.Action("View", new { Id = ViewBag.Place.Id, Title = Funcs.SanitizeForUrl(ViewBag.Place.Name) })" />
+    <meta property="og:type" content="blog" />
+}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="main right">
+    <section class="object row">
+        <div class="objectbox">
+            <h2 class="objecttitle">@ViewBag.Place.Name</h2>
+            <div class="options">
+                <a class="addtoclip" href="#" onclick="stash.Add(@ViewBag.Place.Id); return false;">Dodaj do schowka</a>
+                <a class="objectprint" href="#" onclick="loadPrintPage(); return false;">Drukuj ofertę</a>
+                <a class="objectpdf" href="@Url.Action("Pdf", new { Id = ViewBag.Place.Id })">Pobierz ofertę w PDF</a>
+                <!--<a class="objectshare" href="#">Poleć znajomym</a>-->
+               <div class="fb-like" data-href="http://www.upstrakt.pl" data-layout="button_count" data-action="like" data-show-faces="true" data-share="false"></div>
+            </div>
+            <div class="objectinfo">
+                <div class="img">
+                    <div class="imgcenter">
+                        @if (ViewBag.MainPhoto == null || string.IsNullOrEmpty(ViewBag.MainPhoto.Filename))
+                        {
+                            <img width="330" height="264" src="@Thumbnail.Uri(Thumbnail.ExtraLarge, null)" alt="@ViewBag.Place.Name">
+                        }
+                        else
+                        {
+                            <a href="@(ImagesConfiguration.PhotosUrl + ViewBag.MainPhoto.Filename)" data-lightbox="obiekt_@ViewBag.Place.Id">
+                                <img width="330" height="264" src="@Thumbnail.UriFromPhoto(Thumbnail.ExtraLarge, ViewBag.MainPhoto)" alt="@ViewBag.Place.Name">
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="objectinfomain">
+                    <div class="infoinput">
+                        <span class="infoname">Cena od:</span><span id="objectprice">@String.Format("{0:c}", ViewBag.Place.MinimumPrice)</span>
+                    </div>
+                    <div class="infoinput noborder labelgroup">
+                        <span class="infoname">Adres:</span><span id="objectadres">@ViewBag.Place.Address</span>
+                    </div>
+                    <div class="infoinput noborder">
+                        <span class="infoname">Kod pocztowy:</span><span id="objectpost">@ViewBag.Place.Postal</span>
+                    </div>
+                    <div class="infoinput noborder">
+                        <span class="infoname">Miejscowość:</span><span id="objectmiejsc">@ViewBag.Place.City</span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Województwo:</span><span id="objectwoj">@ViewBag.Place.Voivoidship</span>
+                    </div>
+                    <div class="infoinput">
+                        @{
+                            var region = "";
+
+                            switch ((string)ViewBag.Place.Region)
+                            {
+                                case "morze":
+                                    region = "Morze";
+                                    break;
+
+                                case "gory":
+                                    region = "Góry";
+                                    break;
+
+                                case "mazury":
+                                    region = "Mazury";
+                                    break;
+
+                                case "jezioro":
+                                    region = "Jeziora";
+                                    break;
+                            }
+                        }
+                        <span class="infoname">Region:</span><span id="objectregion">@region</span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Telefon:</span><span id="objectphone"><a href="#">Pokaż numer&nbsp;&nbsp;>></a></span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">E-mail:</span><a id="objectmail" href="mailto:@ViewBag.Place.Email">@ViewBag.Place.Email</a>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Strona www:</span><a id="objectweb" href="http://@ViewBag.Place.Web" target="_blank" rel="nofollow">@ViewBag.Place.Web</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="objecticons">
+                <div class="objecticonslist">
+                </div>
+            </div>
+            <div class="objectdescription">
+                <div id="tab-container" class="tab-container">
+                    <ul class="etabs">
+                        <li class="tab"><a href="#tabopis">Cena i opis</a></li>
+                        <li class="tab"><a href="#tabgaleria">Galeria</a></li>
+                        <li class="tab"><a href="#tabopcje">Opcje obiektu</a></li>
+                        <li class="tab"><a href="#tablokalizacja">Lokalizacja</a></li>
+                        <li class="tab"><a href="#tabkomentarze">Komentarze</a></li>
+                        <li class="tab"><a href="#tabkontakt">Kontakt</a></li>
+                    </ul>
+                    <div class="tabcontent" id="tabopis">
+                        @if (ViewBag.Place.Prices != null && ViewBag.Place.Prices.Count > 0)
+                        {
+                            <h2>Cennik</h2>
+                            <table class="price_list">
+                                <thead>
+                                    <tr>
+                                        <td width="200">Typ pokoju</td>
+                                        <td>Okres</td>
+                                        <td width="125">Cena</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var price in ViewBag.Place.Prices)
+                                    {
+                                        <tr class="price_row">
+                                            <td class="price_name">@price.Name</td>
+                                            <td class="price_duration">@price.Duration</td>
+                                            <td class="price_value">@String.Format("{0:c}", price.Value)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        <p class="description">@Html.Raw(ViewBag.Place.Description)</p>
+                    </div>
+                    <div class="tabcontent" id="tabgaleria">
+                        @foreach (var photo in ViewBag.Photos)
+                        {
+                            <a href="@(ImagesConfiguration.PhotosUrl + photo.Filename)" data-lightbox="obiekt_@ViewBag.Place.Id"><img src="@(Thumbnail.Uri(Thumbnail.Small, photo.Filename))"></a>
+                        }
+
+                        <p class="clearfix"></p>
+
+                        <div class="video-display">
+                        </div>
+                    </div>
+                    <div class="tabcontent" id="tabopcje">
+                        <p class="color">Opcje obiektu</p>
+                        <ul class="tabopcje">
+                            @if (((string)ViewBag.Place.AdditionalOptions).Contains("SeniorFriendly"))
+                            {
+                                <li>Obiekt przyjazny seniorom</li>
+                            }
+                            
+                            @if (((string)ViewBag.Place.AdditionalOptions).Contains("EventsAccepted"))
+                            {
+                                <li>organizujemy imprezy okolicznościowe</li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="tabcontent" id="tablokalizacja">
+                        <div class="map_wrap">
+                            <div class="map_go"></div>
+                        </div>
+                    </div>
+                    <div class="tabcontent" id="tabkomentarze">
+                        <div class="comments_wrap">
+                        </div>
+                    </div>
+                    <div class="tabcontent" id="tabkontakt">
+                        <div class="addposthead">Formularz kontaktowy</div>
+                            <form class="sendmail">
+                                <input required type="email" placeholder="Email" name="Email" @if (ViewBag.IsLogged) { <text>value="@ViewBag.MyEmail" disabled="disabled"</text> }/><br />
+                                <input required type="text" placeholder="Temat" name="Subject" /><br />
+                                <textarea required name="Content" placeholder="Treść"></textarea>
+                                <button type="submit">Wyślij</button>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="print-page-container" style="display:none">
+    </div>
+
+    <script>
+        var pE = '@ViewBag.EncodedPhone';
+        $('#objectphone a').click(function () {
+            $(this).parent().html(Base64.decode(pE));
+            return false;
+        })
+    </script>
+
+    <script>
+    function loadPrintPage() {
+
+        // create a hidden frame.
+        var printFrame = $("<iframe>").hide();
+        // set the "src" of the iframe to the URL containing what you want to print
+        printFrame.attr("src", "/Object/Print?Id=" + OBJECT_ID);
+        // add the hidden iframe somewhere in your page
+        $("#print-page-container").append(printFrame);
+
+    }
+    </script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $("#popular").selectbox();
+        });
+        $(function () {
+            $('#tab-container').easytabs({ animationSpeed: 100 });
+        });
+    </script>
+
+    <script type="text/javascript">
+        //AJAX DATA
+        var OBJECT_OPTIONS = JSON.parse('@(Html.Raw(Json.Encode(ViewBag.Place.Options)))');
+        var MAP_POSITION = {
+            Lattitude: "@(ViewBag.Place.Lattitude)",
+            Longitude: "@(ViewBag.Place.Longitude)"
+        };
+        var OBJECT_ID = "@(ViewBag.Place.Id)";
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            //Display object icons
+            DisplayObjectOptions($(".objecticonslist"), OBJECT_OPTIONS);
+            $('.icon[rel=tipsy]').tipsy({ gravity: 's', offset: 0, fade: false });
+
+            var mapDisplay = new MapDisplay($('.map_wrap .map_go'), MAP_POSITION.Lattitude, MAP_POSITION.Longitude);
+
+            $("#tab-container").bind('easytabs:after', function (e, $tab, $container) {
+                if ($container.find('.map_wrap').length > 0)
+                    mapDisplay.Refresh();
+            });
+
+            var comments = new Comments($('#tabkomentarze .comments_wrap'), OBJECT_ID, User.Role === 'admin');
+
+            var contactForm = new ContactForm($("form.sendmail"), OBJECT_ID);
+
+            var videoDisplay = new VideoDisplay(OBJECT_ID, $('.video-display'));
+            videoDisplay.load();
+        });
+
+        function loadPrintPage() {
+            var printFrame = $("<iframe>").hide();
+            printFrame.attr("src", "/Object/Print?Id=" + OBJECT_ID);
+            $("#print-page-container").empty().append(printFrame);
+
+        }
+    </script>
+</div>
+@Html.Action("Left", "Sidebar")

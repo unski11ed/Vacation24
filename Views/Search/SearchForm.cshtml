@@ -1,0 +1,83 @@
+﻿@{
+    Layout = null;
+}
+<form id="query-form">
+    <label>Województwo:</label>
+    <select name="voiv" id="woj">
+        <option value="">Pomiń</option>
+        @foreach(var voivoidship in Voivoidships.List){
+            <option value="@voivoidship">@voivoidship</option>
+        }
+    </select>
+    <label>Miejscowość:</label>
+    <select name="city" id="miejsc">
+        <option value="">Pomiń</option>
+    </select>
+    <label>Typ:</label>
+    <select name="type" id="typ">
+        <option value="">Pomiń</option>
+        @foreach (var type in ObjectTypes.List)
+        {
+            <option value="@type">@type</option>
+        }
+    </select>
+    <label>Cena do:</label>
+    <div class="input-group input-group-sm">
+        <input type="text" name="maxprice" class="form-control numeric">
+        <span class="input-group-addon">PLN</span>
+    </div>
+    <button class="search-icon" type="submit">Szukaj</button>
+    
+    <script>
+        function populateCities(voivoidship, complete) {
+            if (!voivoidship)
+                voivoidship = "";
+
+            ajax("/Search/GetCitiesInVoivoidship", {
+                Name: voivoidship
+            }, function (data) {
+                var $container = $('#miejsc');
+
+                $container.children(":not(:first)").remove();
+
+                data.cities.forEach(function(city){
+                    $container.append("<option value='" + city + "'>" + city + "</option>");
+                });
+
+                if (complete) complete.call(window);
+            });
+        }
+
+        populateCities(decodeURIComponent(QueryString.voiv), function () {
+            $("#query-form").find('input, select').each(function () {
+                if (QueryString[$(this).attr('name')]) {
+                    $(this).val(decodeURIComponent(QueryString[$(this).attr('name')]));
+                }
+                $("#woj, #miejsc, #typ").selectbox('detach').selectbox();
+            });
+        });
+
+        $("#woj").change(function () {
+            populateCities($(this).val(), function () {
+                $('#woj, #miejsc').selectbox('detach').selectbox();
+            });
+        });
+
+        $("input.numeric").numeric({ decimal: ',' });
+
+        $("#query-form").submit(function (e) {
+            e.preventDefault();
+
+            $("input.numeric").val($("input.numeric").val().replace(',', '.'));
+
+            var query = $(this).serialize();
+
+            window.location = "/Object/List?" + query;
+
+            return false;
+        });
+
+        $("#woj, #miejsc, #typ").selectbox();
+    </script>
+</form>
+

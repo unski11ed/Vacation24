@@ -1,0 +1,103 @@
+﻿@model Wczasy24_MVC4.Models.RegisterUserModel
+
+@{
+    Layout = null;
+}
+
+@using BotDetect.Web.UI.Mvc;
+
+@if (@ViewBag.Success != null)
+{
+    <p class="info-register-success">Pomyślnie założono konto. Otwórz maila aktywacyjnego i postępuj wg. podanych instrukcji. @Html.ActionLink("Przejdź do strony głównej", "Index", "Home")</p>
+}
+else
+{
+    @Styles.Render(@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl)
+    
+    using (Html.BeginForm("RegisterUser", "Account", FormMethod.Post, new { @class = "frm_user frm_register" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <hr>
+            <h4>Dane identyfikacyjne</h4>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.UserName)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.UserName)
+                @Html.ValidationMessageFor(model => model.UserName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Password)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.ConfirmPassword)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.ConfirmPassword)
+                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Name)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Address)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Address)
+                @Html.ValidationMessageFor(model => model.Address)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PostalCode)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.PostalCode)
+                @Html.ValidationMessageFor(model => model.PostalCode)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.City)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.City)
+                @Html.ValidationMessageFor(model => model.City)
+            </div>
+
+            <div class="editor-label">
+                <label>Przepisz kod z obrazka:</label>
+            </div>
+            <div class="editor-field captcha">
+                @{ MvcCaptcha sampleCaptcha = new MvcCaptcha("RegisterUserCaptcha"); }
+                @Html.Captcha(sampleCaptcha)
+                @Html.TextBox("RegisterUserInput")
+                @Html.ValidationMessage("RegisterUserInput")
+            </div>
+
+            <div class="editor-field checkbox">
+                @Html.EditorFor(model => model.Tos, new { @class = "regulamin" })
+                <label for="Tos">Akceptuję regulamin serwisu</label><a target="_blank" href="/Static/Regulamin" class="reg">zapoznaj się z regulaminem</a>
+                <br />
+                @Html.ValidationMessageFor(model => model.Tos)
+            </div>
+
+            <button type="submit">Zarejestruj się</button>
+        </fieldset>
+    }
+}
+

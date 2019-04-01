@@ -1,0 +1,120 @@
+﻿<!-- NOWY OBIEKT-->
+<script id="newProjectTpl" type="text/x-jsrender">
+	<h3 class"sub">Witaj, dodajesz nowy obiekt<br/><span>prosimy o podanie nazwy obiektu</span></h3>
+    <form id="newPlaceFrm">
+        <label for="name">Nazwa obiektu: </label>
+        <input type="text" name="name" />
+		<div class="clearfix"></div>
+        <button type="submit">Stwórz nowy obiekt</button>
+    </form>
+</script>
+
+<script id="newPhotoThumbnail" type="text/x-jsrender">
+    <div class="photo_thumb" data-photo-id="{{:photoId}}">
+        <a href="{{:photoUrl}}" data-lightbox="object">
+            <img src="{{:thumbnailUrl}}" />
+        </a>
+        <a href="#" class="delete_photo">Usuń</a>
+    </div>
+</script>
+
+<script id="comment" type="text/x-jsrender">
+    <div class="comment post" data-comment-id="{{:id}} data-owner-id=" {{:userid}}">
+        <div class="posthead"><span class="postname left">{{:userName}}</span><span class="postdate right">{{:date}}</span></div>
+        <div class="postcontent">
+            <p>
+                {{:content}}
+            </p>
+        </div>
+		{{if deletable}}
+        <a href="#" class="delete">Usuń</a>
+        {{/if}}
+    </div>
+</script>
+
+
+<script id="commentCreate" type="text/x-jsrender">
+    <div class="addposthead">Dodaj swój komentarz</div>
+    <form class="addpost addComment">
+        <label>Treść:</label><textarea maxlength="300"></textarea>
+        <div class="clearfix"></div>
+        <button type="submit">Wyślij</button>
+    </form>
+</script>
+
+<script id="commentForbidden" type="text/x-jsrender">
+    <p class="infobox"><a href="@Url.Action("Login", "Account")">Zaloguj się</a>, aby móć dodać komentarz.</p>
+</script>
+
+<script id="placeOptionsWindow" type="text/x-jsrender">
+    <div id="options_window_wrap">
+        <h3>Dostępne opcje obiektu<br/><span>Najedź myszką na ikonę, aby zobaczyć opis<br/><span class="blue">Kliknij, aby dodać do obiektu</h3>
+        <div class="available_options">
+            {{for availableOptions}}
+                <span class="option_icon {{>iconClass}}" rel="tipsy" original-title="{{>title}}" data-model-name="{{>modelName}}"></span>
+            {{/for}}
+			<div class="clearfix"></div>
+        </div>
+		
+        <h3>Ikony przypisane do Twojego obiektu<br/><span>Kliknij, aby usunąć ikonę</h3>
+        <div class="place_options">
+            {{for placeOptions}}
+                <span class="option_icon {{>iconClass}}" rel="tipsy" original-title="{{>title}}" data-model-name="{{>modelName}}"></span>
+            {{/for}}
+        </div>
+		<div class="clearfix"></div>
+        <a href="#" class="cmd_ok">Zapisz</a>
+        <a href="#" class="cmd_cancel">Anuluj</a>
+    </div>
+</script>
+
+<script id="priceElements" type="text/x-jsrender">
+    <table class="price_list">
+        <thead>
+            <tr>
+                <td width="200">Typ pokoju</td>
+                <td>Okres</td>
+                <td width="125">Cena</td>
+                {{if isEditable}}
+                <td width="58"></td>
+                {{/if}}
+            </tr>
+        </thead>
+        <tbody>
+            {{for prices}}
+            <tr class="price_row">
+                <td>
+                    <input class="price_name" type="text" value="{{>Name}}" placeholder="Typ pokoju" readonly="readonly" required />
+                </td>
+                <td>
+                    <input class="price_duration" type="text" value="{{>Duration}}" placeholder="Okres" readonly="readonly" required />
+                </td>
+                <td>
+                    <input class="price_value" type="text" value="{{:~toDoubleDecimal(Value)}} " placeholder="Cena" readonly="readonly" required />
+                    <span> zł</span>
+                </td>
+                {{if #parent.parent.data.isEditable}}
+                <td class="price-commands">
+                    <a href="#" style="display: none" class="price-edit-command price_update">Zapisz</a>
+                    <a href="#" style="display: none" class="price-edit-command price_cancel">Anuluj</a>
+                    <a href="#" class="price_edit">Edytuj</a>
+                    <a href="#" class="price_remove">Usuń</a>
+                </td>
+                {{/if}}
+            </tr>
+            {{/for}}
+        </tbody>
+    </table>
+</script>
+
+<script id="noteWindow" type="text/x-jsrender">
+	<h3>Notatki</h3>
+    <div class="note-content">
+        <form>
+            <input type="hidden" name="Id" value="{{>Id}}"/>
+            <input type="hidden" name="UserId" value="{{>UserId}}" />
+            <textarea name="Content">{{>Content}}</textarea>
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+</script>

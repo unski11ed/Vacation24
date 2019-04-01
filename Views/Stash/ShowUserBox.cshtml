@@ -1,0 +1,60 @@
+﻿@{
+    Layout = null;
+}
+<h3>Schowek</h3>
+<ul class="clipobjects">
+
+</ul>
+<script>
+    var stash = new Stash();
+
+    function refreshStashList() {
+        var items = stash.List();
+        var markup = '<li data-id="{{Id}}" class="clipelement"><a href="/Object/View?Id={{Id}}"><img width="30" height="26" src="{{Thumbnail}}"/><span>{{Name}}</span></a><a href="#" class="cliptofav">Przenieś do ulubionych</a><span class="clipobjectremove" title="Usuń">Usuń</span></li>';
+
+        var $container = $('.clipobjects').empty();
+        items.forEach(function (item) {
+            $container.append(markup.replace(/{{Id}}/g, item.Id)
+                                    .replace(/{{Name}}/g, item.Name)
+                                    .replace(/{{Thumbnail}}/g, item.ThumbnailSmall));
+        });
+        assignEventHandlers($container.children());
+    }
+
+    function refreshFavoritesList() {
+        AjaxLoader.Show();
+        $.get("/Favorites/ShowUserBox", function (data) {
+            $('.staticfavs').html(data);
+            AjaxLoader.Hide();
+        });
+    }
+
+    function assignEventHandlers($items) {
+        $items.find('.cliptofav').click(function () {
+            var id = $(this).closest('.clipelement').data('id');
+
+            ajax("/Favorites/Create", { PlaceId: id }, function (data) {
+                if (data.Status == ResultType.Info) {
+                    Message.Notification(data.Message);
+                } else {
+                    refreshFavoritesList();
+                }
+            });
+
+            return false;
+        });
+
+        $items.find('.clipobjectremove').click(function () {
+            var $clipElement = $(this).closest('.clipelement')
+
+            stash.Remove($clipElement.data('id'));
+
+            $clipElement.remove();
+            
+            return false;
+        });
+    }
+    stash.OnStashChanged = refreshStashList;
+
+    refreshStashList();
+</script>

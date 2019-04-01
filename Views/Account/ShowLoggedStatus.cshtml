@@ -1,0 +1,14 @@
+﻿@{
+    Layout = null;
+}
+
+@if (ViewBag.IsAuthenticated)
+{	
+	@Html.ActionLink("Wyloguj", "Logout")
+    <a href="@Url.Action("Index", "Profile")"><span>Witaj</span> @ViewBag.UserName</a>    
+}
+else
+{
+    @Html.ActionLink("Rejestracja", "Login", "Account", null, null, "regsec", null, null)
+    @Html.ActionLink("Logowanie", "Login")
+}

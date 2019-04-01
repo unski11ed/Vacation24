@@ -1,0 +1,57 @@
+﻿@model Wczasy24_MVC4.Models.DTO.UpdateUserViewModel
+
+@using (Html.BeginForm("EditUser", "Profile"))
+{ 
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+	<div class="main">
+	<div class="greybox register">
+    <fieldset>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Name)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Address)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Address)
+            @Html.ValidationMessageFor(model => model.Address)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PostalCode)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PostalCode)
+            @Html.ValidationMessageFor(model => model.PostalCode)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.City)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.City)
+            @Html.ValidationMessageFor(model => model.City)
+        </div>
+
+        <button type="submit">Zapisz zmiany</button>
+    </fieldset>
+
+
+	<br/>
+		<div>
+    @Html.ActionLink("Powrót do panelu", "Index")
+</div>
+	</div>
+	</div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

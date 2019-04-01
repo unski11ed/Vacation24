@@ -1,0 +1,103 @@
+﻿@{
+    Layout = null;
+}
+@using Vacation24.Core.Configuration.Images
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Drukowanie</title>
+    @Styles.Render("~/bundles/main_styles")
+    @Scripts.Render("~/bundles/main_scripts")
+
+    @Scripts.Render("~/Scripts/Core/GlobalModules.js")
+</head>
+<body>
+    <section class="object row">
+        <div class="objectbox">
+            <h2 class="objecttitle">@ViewBag.Place.Name</h2>
+            <div class="objectinfo">
+                <div class="img" style="width: auto; height: auto">
+                    <div class="imgcenter">
+                        @if (ViewBag.MainPhoto != null)
+                        {
+                            <img width="300" height="240" src="@(Thumbnail.UriFromPhoto(Thumbnail.ExtraLarge, ViewBag.MainPhoto))" alt="@ViewBag.Place.Name">
+                        }
+                    </div>
+                </div>
+                <div class="objectinfomain">
+                    <div class="infoinput">
+                        <span class="infoname">Cena od:</span><span id="objectprice">@String.Format("{0:c}", ViewBag.Place.MinimumPrice) PLN</span>
+                    </div>
+                    <div class="infoinput noborder labelgroup">
+                        <span class="infoname">Adres:</span><span id="objectadres">@ViewBag.Place.Address</span>
+                    </div>
+                    <div class="infoinput noborder">
+                        <span class="infoname">Kod pocztowy:</span><span id="objectpost">@ViewBag.Place.Postal</span>
+                    </div>
+                    <div class="infoinput noborder">
+                        <span class="infoname">Miejscowość:</span><span id="objectmiejsc">@ViewBag.Place.City</span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Województwo:</span><span id="objectwoj">@ViewBag.Place.Voivoidship</span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Telefon:</span><span id="objectphone">@ViewBag.Place.Phone</span>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">E-mail:</span><a id="objectmail" href="mailto:@ViewBag.Place.Email">@ViewBag.Place.Email</a>
+                    </div>
+                    <div class="infoinput">
+                        <span class="infoname">Strona www:</span><a id="objectweb" href="@ViewBag.Place.Web" target="_blank" rel="nofollow">@ViewBag.Place.Web</a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="objecticons">
+                <div class="objecticonslist">
+                </div>
+            </div>
+            <div class="objectdescription">
+                <div id="tab-container" class="tab-container">
+                    <div class="tabcontent" id="tabopis">
+                        @Html.Raw(ViewBag.Place.Description)
+                    </div>
+                    <div class="tabcontent" id="tabcennik">
+                        <table class="price_list">
+                            <thead>
+                                <tr>
+                                    <td width="200">Typ pokoju</td>
+                                    <td>Okres</td>
+                                    <td width="125">Cena</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var price in ViewBag.Place.Prices)
+                                {
+                                    <tr class="price_row">
+                                        <td class="price_name">@price.Name</td>
+                                        <td class="price_duration">@price.Duration</td>
+                                        <td class="price_value">@String.Format("{0:c}", price.Value) zł</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tabcontent" id="tablokalizacja">
+                        <div class="map_wrap">
+                            <div class="map_go"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+    $(document).ready(function () {
+        window.print();
+    });
+    </script>
+</body>
+</html>

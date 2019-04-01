@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="my-comments" data-count="@ViewBag.Count">
+    @if (ViewBag.Comments.Count == 0)
+    {
+        <p>Brak komentarzy</p>
+    }
+    @foreach (var comment in ViewBag.Comments)
+    {
+        <div class="comment post" data-comment-id="@comment.Id">
+            <div class="posthead">
+                <span class="postname left"><a href="@Url.Action("View", "Object", new { Id = @comment.PlaceId })">@comment.PlaceName</a></span>
+                <span class="postdate right">@comment.Date.ToString("dd.MM.yyyy HH:mm")</span>
+            </div>
+            <div class="postcontent">
+                <p>
+                    @comment.Content
+                </p>
+            </div>
+        </div>
+    }
+</div>
+

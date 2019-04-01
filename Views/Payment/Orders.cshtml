@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Orders";
+}
+
+@using PagedList
+@using PagedList.Mvc
+
+@model PagedList<Wczasy24_MVC4.Models.Order>
+
+<h2>Lista zamówień</h2>
+
+<table class="orders_list">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>PayUId</th>
+            <th>Użytkownik</th>
+            <th>Usługa</th>
+            <th>Status</th>
+            <th>Złożone</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.ExternalOrderId</td>
+                <td>@order.PayUOrderId</td>
+                <td>
+                    @order.Profile.Email<br/>
+                    @order.Profile.Name<br/>
+                    @order.Profile.Address<br />
+                    @order.Profile.PostalCode &ensp; @order.Profile.City
+                </td>
+                <td>
+                    @order.ServiceDefinition.Name<br/>
+                    @order.ServiceDefinition.Days dni<br/>
+                    @String.Format("{0:c}", order.ServiceDefinition.Price)<br/>
+                </td>
+                <td>
+                    @order.OrderStatus.ToString()
+                </td>
+                <td>
+                    @order.Created
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Orders", new { page }), PagedListRenderOptions.Classic)

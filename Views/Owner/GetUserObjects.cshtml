@@ -1,0 +1,22 @@
+﻿@{
+    Layout = null;
+}
+
+@model List<Wczasy24_MVC4.Models.Place>
+
+@foreach (var place in Model)
+{
+    <div class="object-wrap">
+        <div class="myobjectname"><a href="@Url.Action("View", "Object", new { Id = place.Id, Title = Funcs.SanitizeForUrl(place.Name) })">@place.Name</a></div>
+            
+        @Html.Action("ViewObjectPromotions", "Payment", new { objectId = @place.Id})
+
+        <div class="mytab">Statystyki obiektu</div>
+        <ul class="mytabinfo">
+            <li><span class="mytabname">Całkowita ilość wyświetleń</span><span class="right violet">@place.Views</span></li>
+            <li><span class="mytabname">Ilość unikalnych wyświetleń</span><span class="right blue">@place.UniqueViews</span></li>
+        </ul>
+        <div class="clearfix"></div>
+        <a href="@Url.Action("Edit", "Object", new { id = place.Id })" class="editobject">Edytuj obiekt</a>
+    </div>
+}

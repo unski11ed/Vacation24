@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Aktywacja konta";
+}
+
+<h2>Aktywacja konta</h2>
+
+@if (ViewBag.Result)
+{
+    <p class="single-message">Konto zostało pomyślnie aktywowane - @Html.ActionLink("strona główna", "Index", "Home")</p>
+}
+else
+{
+    <p class="single-message">Błąd podczas aktywowania konta. Spróbuj ponownie.</p>
+}
+

@@ -1,0 +1,49 @@
+﻿@{
+    ViewBag.Title = "Konto użytkownika";
+}
+
+<div class="main left">
+    <section class="user row">
+        <h2 class="sub">Moje konto<br /><span>Panel Użytkownika</span></h2>
+
+        @if (ViewBag.IsAdmin)
+        {	
+			<div class="staticbox">
+            <a class="switchpanel" href="@Url.Action("Index", "Owner")">Panel zarządzania obiektami i płatnościami</a>
+			</div>
+        }
+        <div class="staticbox staticfavs">
+            @Html.Action("ShowUserBox", "Favorites")
+        </div>
+
+        <div class="staticbox">
+            @Html.Action("ShowUserBox", "Stash")
+        </div>
+
+        <div class="staticbox staticcomments">
+            <h3>Moje komentarze</h3>
+            <div class="comments">
+                @Html.Action("ShowMyComments", "Comments")
+                <div class="my-comments-paginator"></div>
+
+                <script type="text/javascript">
+                    $(function () {
+                        Paginator($('.my-comments-paginator'), function(page){
+                            $.get("/Comments/ShowMyComments?page=" + (page - 1), function(result){
+                                var $list = $(".my-comments");
+
+                                $list.html(result);
+                            });
+                        }, $('.my-comments').data('count'));
+                    });
+                </script>
+            </div>
+        </div>
+        <div class="staticbox">
+            <h3>Moje konto</h3>
+            <a href="@Url.Action("Edit")" class="editbox">Moje dane</a>
+            <a href="@Url.Action("ChangePassword", "Account")" class="editbox">Zmiana hasła</a>
+        </div>
+    </section>
+</div>
+@Html.Action("Right", "Sidebar")

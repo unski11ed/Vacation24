@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+@model List<Wczasy24_MVC4.Models.Service>
+
+<h2>Wybierz usługę do wykupienia</h2>
+
+<!--Display form-->
+@using (Html.BeginForm("BuyService", "Payment", FormMethod.Post, new { @class = "payment-form" }))
+{
+    <ul>
+        @{int i = 0;}
+        @foreach (var service in Model)
+        {
+            <li class="radio">
+                <input id="@service.Id" class="payment-option" type="radio" name="DefinitionId" value="@service.Id" @(i == 0 ? "checked" : "" ) >
+				<label for="@service.Id" >
+                <span class="service-name">@service.Name</span> na okres: [
+                <span class="service-duration">@service.Days dni</span> ] - koszt usługi: [
+                <span class="service-price">@service.Price zł</span> ]
+				</label>
+            </li>
+            i++;
+        }
+    </ul>
+    
+    <input type="hidden" name="Data"  value="[]"/>
+    
+    <button class="buyservice" type="submit">Wykup</button>
+    <a class="return" href="#" onclick="CloseWindow(); return false;">Anuluj</a>
+}

@@ -1,0 +1,34 @@
+﻿<script type="text/javascript">
+    function CreateProjectWindow() {
+        var $content = ShowWindow("#newProjectTpl", {});
+
+        $content.find('#newPlaceFrm').submit(function (e) {
+            e.preventDefault();
+
+            var name = $(this).find('input[name=name]').val();
+            if (name === '')
+                return false;
+
+            ajax("/Object/Save", {
+                Id: 0,
+
+                Name: name,
+
+            }, function (data) {
+                if (data.Status === ResultType.Success) {
+                    window.location = "/Object/Edit?id=" + data.Message;
+                }
+            }, function () {
+
+            });
+
+            return false;
+        });
+    }
+
+    $('.add_place').click(function () {
+        CreateProjectWindow();
+
+        return false;
+    });
+</script>

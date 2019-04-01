@@ -1,0 +1,59 @@
+﻿@model Wczasy24_MVC4.Models.DTO.ContactFormMessage
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@using BotDetect.Web.UI.Mvc;
+
+<div class="main left">
+    <h2>Kontakt</h2>
+    @using (Html.BeginForm("Send", "Contact"))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="main">
+            <div class="greybox register">
+                <fieldset>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Email)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Email)
+                        @Html.ValidationMessageFor(model => model.Email)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Subject)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Subject)
+                        @Html.ValidationMessageFor(model => model.Subject)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Content)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Content)
+                        @Html.ValidationMessageFor(model => model.Content)
+                    </div>
+                    <div class="editor-field captcha">
+                        @{ MvcCaptcha sampleCaptcha = new MvcCaptcha("ContactFormCaptcha"); }
+                        @Html.Captcha(sampleCaptcha)
+                        @Html.TextBox("CaptchaField")
+                        @Html.ValidationMessage("CaptchaField")
+                    </div>
+                    <button type="submit">Wyślij</button>
+                </fieldset>
+            </div>
+        </div>
+
+    }
+</div>
+
+
+@Html.Action("Right", "Sidebar")
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

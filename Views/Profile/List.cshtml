@@ -1,0 +1,278 @@
+﻿@{
+    ViewBag.Title = "List";
+}
+
+@model PagedList.StaticPagedList<Wczasy24_MVC4.Models.DTO.ProfileDetails>
+
+@using PagedList
+@using PagedList.Mvc
+
+<h2>Lista użytkowników</h2>
+
+<div class="users-list-type">
+    <a href="javascript:void(0)" data-target="all">Wszyscy</a>
+    <a href="javascript:void(0)" data-target="user">Użytkownicy</a>
+    <a href="javascript:void(0)" data-target="owner">Właściciele</a>
+</div>
+
+<table class="profile_list">
+    <thead>
+        <tr>
+            <th class="sortable" data-sort-table="Id">Id</th>
+            <th>Role</th>
+            <th class="sortable" data-sort-table="UserName">Email</th>
+            <th class="sortable" data-sort-table="Name">Nazwa</th>
+            <th class="sortable" data-sort-table="Address">Adres</th>
+            <th class="sortable" data-sort-table="NIP">NIP</th>
+            <th>Osoba do kontaktu</th>
+            <th>Abonament</th>
+            <th>Potwierdzony E-mail</th>
+            <th class="sortable" data-sort-table="Locked">Stan</th>
+            <th>Linki</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var profile in Model)
+        {
+            <tr>
+                <td>@profile.UserId</td>
+                <td>
+                    @foreach (var role in profile.Roles)
+                    {
+                        switch (role)
+                        {
+                            case "user":
+                                <text>Użytkownik</text>
+                                break;
+                            case "owner":
+                            <text>Właściciel</text>
+                                break;
+                            case "admin":
+                            <text>Administrator</text>
+                                break;
+                        }
+                        <br />
+                    }
+                </td>
+                <td>@profile.Email</td>
+                <td>@profile.Name</td>
+                <td>
+                    @profile.Address<br />
+                    @profile.PostalCode&nbsp;@profile.City
+                </td>
+                <td>@(profile.IsOwner ? profile.Nip : "n.d.")</td>
+                <td>
+                    @if (profile.IsOwner)
+                    {
+                        if (profile.Contact != null)
+                        {
+                            <text>@profile.Contact.FirstName&nbsp;@profile.Contact.LastName</text><br />
+                            <text>@profile.Contact.Phone</text>
+                        }
+                        else
+                        {
+                            <text>Brak</text>
+                        }
+                    }
+                    else
+                    {
+                        <text>n.d.</text>
+                    }
+            </td>
+            <td>
+                @if (profile.IsOwner)
+                {
+                    if (profile.SubscriptionEnabled)
+                    {
+                        <span class="active">Aktywna</span><br />
+                        <text>Pozostało</text><br/> 
+                        <span class="days">@((profile.SubscriptionExpiriation - DateTime.Now).Days)</span><br/><text>dni</text><br/>
+                        <a class="serviceDeactivate" href="@Url.Action("Deactivate", "Payment", new { serviceId = profile.SubscriptionId, handlerName = "SubscriptionService" })">Deaktywuj</a>
+                    }
+                    else
+                    {
+                        <span class="unactive">Nieaktywna</span>
+                        <a class="serviceActivate payment-modal-activator" href="javascript:void(0)" data-handler="SubscriptionService" data-additional="{'userId': '@profile.UserId' }">Aktywuj</a>
+                    }
+                }
+                else
+                {
+                    <text>n.d.</text>
+                }
+            </td>
+            <td>
+                @if (profile.IsActive)
+                {
+                    <text>Tak</text>
+                }
+                else
+                {
+                    <text>Nie</text>
+                }
+            </td>
+            <td>
+                @if (profile.Locked)
+                {
+                    <span class="unactive">Zablokowany</span><br />
+                    <a class="cmd_lockout" href="@Url.Action("LockUser", "Profile", new { userId = profile.UserId })">Odblokuj</a>
+                }
+                else
+                {
+                    <span class="active">Aktywny</span>
+                    <a class="cmd_lockout" href="@Url.Action("LockUser", "Profile", new { userId = profile.UserId })">Zablokuj</a>
+                }
+            </td>
+            <td>
+                <a href="@Url.Action("ShowUserIps", "Account", new { userId = profile.UserId })">Pokaż adresy IP</a>
+
+                @if (profile.IsOwner)
+                {
+                    <br /><a href="@Url.Action("List", "Object", new { user = profile.UserId })">Obiekty użytkownika</a>
+                    <br /><a class="actionUserObjects" target="_blank" href="@Url.Action("ShowUserObjects", "Admin", new { id = profile.UserId })">Promocje użytkownika</a>
+                }
+                <a href="javascript: void(0)" class="show-profile-note" data-user-id="@profile.UserId">Notatka</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("List", new { page }), PagedListRenderOptions.Classic)
+
+
+<script>
+    $('.actionUserObjects').click(function () {
+        var url = $(this).attr('href');
+
+        window.open(url, "Admin", 'menubar=0, resizable=1, scrollbars=1 width =740, height=500');
+
+        return false;
+    });
+</script>
+<!--=====================Service Management==================================-->
+@Scripts.Render("~/Scripts/payment.js")
+<script>
+    $(function () {
+        Payments.RegisterButtonHandlers();
+
+        $('.serviceDeactivate').click(function () {
+            var $cell = $(this).parent();
+
+            if (confirm("Napewno wyłączyć użytkownikowi usługę?")) {
+                var url = $(this).attr('href');
+
+                $.get(url, function (dataJSON) {
+                    var data = JSON.parse(dataJSON);
+
+                    if (!data) {
+                        alert("Błąd komunikacji");
+                    }
+
+                    if (data.Status == ResultType.Success) {
+                        $cell.html("<span class='unactive'>Nieaktywna</span>");
+                    } else {
+                        alert(data.Message);
+                    }
+                });
+            }
+            return false;
+        });
+
+        $(".cmd_lockout").click(function () {
+            if (confirm("Napewno zmienić stan użytkownika?")) {
+                var url = $(this).attr('href');
+                var $statusSpan = $(this).prev();
+                var $anchor = $(this);
+
+                $.get(url, function (data) {
+                    if (!data) {
+                        alert("Błąd komunikacji")
+                    }
+
+                    var locked = data.Message == "Zablokowany";
+
+                    if (data.Status == ResultType.Success) {
+                        $statusSpan.text(data.Message)
+                                   .removeClass('active unactive')
+                                   .addClass(locked ? 'unactive' : 'active');
+
+                        $anchor.text(locked ? 'Odblokuj' : 'Zablokuj');
+                    } else {
+                        alert(data.Message);
+                    }
+                });
+            }
+            return false;
+        });
+    });
+</script>
+<!--========================Notes Management========================-->
+<script>
+    $(function () {
+        $(".show-profile-note").click(function () {
+            var userId = $(this).data('userId');
+
+            ajax("/Notes/Get", { Id: userId }, function (data) {
+                $windowScope = ShowWindow('#noteWindow', data);
+
+                $windowScope.find('form').on('submit', function (e) {
+                    e.preventDefault();
+
+                    var data = $(this).serializeObject();
+
+                    ajax("/Notes/Save", data, function (data) {
+                        if (data.Status === ResultType.Success) {
+                            CloseWindow();
+                        } else {
+                            alert(data.Message);
+                        }
+                    }, function () {
+                        alert("Błąd komunikacji, spróbuj jeszcze raz");
+                    });
+
+                    return false;
+                });
+            }, function (data) {
+                alert("Błąd połączenia, spóbuj jeszcze raz");
+            });
+        });
+    });
+</script>
+<!--=======================Sorting=======================-->
+<script>
+    $(function () {
+        var currentSort = QueryString['sort'] || 'Id';
+        var currentSortDirection = QueryString['sortdir'] || 'ASC';
+
+        $('.profile_list thead tr th.sortable').each(function () {
+            var $wrapper = $('<a href=\'javascript:void(0)\' class=\'sort-header\'></a>');
+            var sortColumn = $(this).data('sortTable');
+
+            if (sortColumn === currentSort) {
+                $wrapper.addClass('active');
+                $wrapper.addClass('sort-dir-' + currentSortDirection);
+            }
+
+            $(this).wrapInner($wrapper);
+        }).find('.sort-header').click(function () {
+            if ($(this).hasClass('active')) {
+                window.location.href = updateQueryStringParameter(window.location.href, 'sortdir', $(this).hasClass('sort-dir-ASC') ? 'DESC' : 'ASC');
+            } else {
+                window.location.href = updateQueryStringParameter(window.location.href, 'sort', $(this).parent().data('sortTable'));
+            }
+        });
+    });
+</script>
+<!--====================List type======================-->
+<script>
+    $(function () {
+        var currentTarget = QueryString['type'] || 'all';
+
+        $('.users-list-type a').each(function () {
+            if ($(this).data('target') == currentTarget)
+                $(this).addClass('active');
+        }).click(function () {
+            location.href = updateQueryStringParameter(location.href, 'type', $(this).data('target'));
+        });
+    });
+</script>

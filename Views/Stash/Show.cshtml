@@ -1,0 +1,113 @@
+﻿@{
+    Layout = null;
+}
+<div class="stash">
+	<a href="#" class="schowek">Schowek ofert &nbsp;<span class="counter">[0]</span></a>
+    <ul class="items"></ul>
+    
+
+    <script>
+        //Global stash object
+        var stash = new Stash();
+
+        $(function () {
+            var $container = $(".stash");
+            
+            var $items = $container.find('.items');
+            var mouseLeaveTimeout;
+
+            var itemMarkup =
+                "<li class='item' data-id='{{id}}'>"
+                + "  <a class='link' href='{{url}}'>"
+                + "     <img src='{{thumbnail}}' width='50' height='36'/>"     
+                + "     <h4>{{name}}</h4>"
+                + "     <span>{{city}}, {{voivoidship}}</span>"
+				+ "  </a>"
+                + "  <a href='#' title='Usuń' class='delete'>Usuń</a>"
+                + "</li>";
+
+            function generateItem(element) {
+                return itemMarkup.replace(/{{id}}/g, element.Id)
+                                 .replace(/{{url}}/g, "/Object/View/" + element.Id)
+                                 .replace(/{{city}}/g, element.City)
+                                 .replace(/{{name}}/g, element.Name)
+                                 .replace(/{{voivoidship}}/g, element.Voivoidship)
+                                 .replace(/{{thumbnail}}/g, element.ThumbnailSmall);
+                };
+
+            function assignItemEventHandlers($item) {
+                $item.find('.delete').click(function () {
+                    var $item = $(this).closest('.item');
+                    var id = $item.data('id');
+
+                    $item.remove();
+
+                    stash.Remove(id);
+
+                    return false;
+                });
+
+                $item.find('.fav').click(function () {
+                    var $item = $(this).closest('.item');
+                    var id = $item.data('id');
+
+                    ajax("/Favorites/Create", { PlaceId: id }, function (data) {
+                        if (data.Status == ResultType.Info) {
+                            Message.Notification(data.Message);
+                        } else {
+                            refreshFavoritesList();
+                        }
+                    });
+
+                    return false;
+                });
+            };
+
+            function updateCounter() {
+                var counter = stash.GetCounter();
+                $container.find('.counter').text('[' + counter.toString() + ']');
+            }
+
+            stash.OnStashChanged = function () {
+                updateCounter();
+            }
+
+            updateCounter();
+
+            function refreshFavoritesList() {
+                var list = stash.List();
+
+                $items.empty();
+
+                list.forEach(function (element) {
+                    var $item = $(generateItem(element));
+                    $items.append($item);
+                    assignItemEventHandlers($item);
+                });
+
+                $items.slideDown('fast', function () {
+                    $items.addClass('active');
+                });
+            }
+
+            $container.find('.schowek').click(function () {
+                if ($items.hasClass('active'))
+                    return false;
+
+                refreshFavoritesList();
+
+                return false;
+            });
+
+            $container.mouseleave(function () {
+                mouseLeaveTimeout = setTimeout(function () {
+                    $items.slideUp('fast', function () {
+                        $items.removeClass('active');
+                    });
+                }, 1000);
+            }).mouseenter(function () {
+                clearTimeout(mouseLeaveTimeout);
+            });
+        });
+    </script>
+</div>

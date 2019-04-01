@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Logowanie / Rejestracja";
+}
+
+<div class="main left">
+    <section class="login row">
+        <div class="action_wrap">
+            @Html.Action("UserLogin")
+        </div>
+    </section>
+    <section id="regsec" class="register row">
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+        <h2 class="sub">Nie posiadam konta<br /><span>Rejestracja</span></h2>
+        <div class="greybox">
+            <h4>Wybierz rodzaj konta</h4>
+            <div class="radio">
+                <input id="admin" type="radio" name="acc" value="seller" @{if (ViewBag.requestForm != "user") { <text> checked </text>   }}>
+                <label for="admin">Jestem właścicielem ośrodka</label>
+                <div class="clearfix"></div>
+                <input id="user" type="radio" name="acc" value="user" @{if (ViewBag.requestForm == "user") { <text> checked </text>   }}>
+                <label for="user">Jestem użytkownikiem</label>
+            </div>
+
+            <script src="~/Scripts/jquery.validate.min.js"></script>
+            <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+            <div class="action_wrap">
+                @if (ViewBag.requestForm == "user")
+                {
+                    @Html.Action("RegisterUser")
+                }
+                else
+                {
+                    @Html.Action("RegisterSeller")
+                }
+            </div>
+        </div>
+    </section>
+</div>
+@Html.Action("Right", "Sidebar")
+@*@if (ViewBag.isRegister)
+{
+    <script type="text/javascript">
+        $(function () {
+            $('body').scrollTop($('.register.row').offset().top);
+        })
+    </script>
+}*@
+
+<script type="text/javascript">
+    $(".radio input").change(function () {
+        window.location.hash = "regsec";
+        window.location.search = "?reg=" + $(this).val();
+    });
+
+    $(function () {
+        function registerSubmitHandler($form) {
+            $form.submit(function (evt) {
+                //prevent the browsers default function
+                evt.preventDefault();
+                //grab the form and wrap it with jQuery
+                var $form = $(this);
+                //if client side validation fails, don't do anything
+                if (!$form.valid()) return;
+                //send your ajax request
+                AjaxLoader.Show();
+
+                $.ajax({
+                    type: $form.prop('method'),
+                    url: $form.prop('action'),
+                    data: $form.serialize(),
+                    dataType: "text",
+                    traditional: true,
+                    success: function (response) {
+                        var $actionWrap = $form.closest('.action_wrap');
+                        $actionWrap.html(response);
+                        //Re-register submit handler
+                        registerSubmitHandler($actionWrap.find('form'));
+                        reinitialiseScripts($actionWrap);
+                        updateLoginStatus();
+
+                        AjaxLoader.Hide();
+                    }
+                });
+            });
+        }
+
+        function reinitialiseScripts($actionWrap) {
+            $actionWrap.find('script').each(function () {
+                var $script = $(this);
+                var src = $script.attr('src');
+
+                if (src != '') {
+                    $.getScript(src);
+                } else {
+                    eval($script[0].InnerHtml)
+                }
+            });
+        }
+
+        //Register for all post forms
+        registerSubmitHandler($('form'));
+    });
+</script>
+
