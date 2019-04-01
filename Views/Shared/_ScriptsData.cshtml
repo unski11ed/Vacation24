@@ -1,37 +1,39 @@
 ﻿@using Vacation24.Core.Configuration.Images;
 
 <script type="text/javascript">
-    var THUMBNAILS_SMALL = "@Thumbnail.Uri(Thumbnail.Small, "")",
-        THUMBNAILS_EXTRALARGE = "@Thumbnail.Uri(Thumbnail.ExtraLarge, "")",
-        THUMBNAILS_MEGA = "@Thumbnail.Uri(Thumbnail.Mega, "")";
-
-    var PHOTOS_URL = "@Wczasy24_MVC4.Core.Configuration.Images.ImagesConfiguration.PhotosUrl";
-
-    var PLACE_OPTIONS_DEFINITION = [
-	    { modelName: "Barbeque", title: "Grill", iconClass: "ico1" },
-	    { modelName: "Shower", title: "Łazienka", iconClass: "ico2" },
-	    { modelName: "Tv", title: "Telewizor", iconClass: "ico3" },
-	    { modelName: "Internet", title: "Internet", iconClass: "ico4" },
-	    { modelName: "Kitchen", title: "Kuchnia", iconClass: "ico5" },
-	    { modelName: "Parking", title: "Parking", iconClass: "ico6" },
-	    { modelName: "Food", title: "Wyżywienie", iconClass: "ico7" },
-	    { modelName: "Bicycles", title: "Wypożyczalnia rowerów", iconClass: "ico8" },
-	    { modelName: "Disableds", title: "Obiekt przystosowany dla osób niepełnosprawnych", iconClass: "ico9" },
-	    { modelName: "Pets", title: "Akceptujemy zwierzęta domowe", iconClass: "ico10" },
-	    { modelName: "Radio", title: "Radio", iconClass: "ico11" },
-	    { modelName: "Playground", title: "Plac zabaw dla dzieci", iconClass: "ico12" },
-	    { modelName: "PaymentCards", title: "Akceptujemy karty płatnicze", iconClass: "ico13" },
-	    { modelName: "Kettle", title: "Czajnik", iconClass: "ico14" },
-	    { modelName: "Garden", title: "Ogród wypoczynkowy", iconClass: "ico15" },
-	    { modelName: "Fenced", title: "Teren ogrodzony", iconClass: "ico16" },
-	    { modelName: "Sauna", title: "Sauna", iconClass: "ico17" },
-	    { modelName: "Pool", title: "Basen", iconClass: "ico18" },
-	    { modelName: "AirConditioning", title: "Klimatyzacja", iconClass: "ico19" },
-	    { modelName: "Fitness", title: "Fitness", iconClass: "ico20" },
-        { modelName: "Ski", title: "Wypożyczalnia nart", iconClass: "ico21" },
-        { modelName: "ConnferenceRoom", title: "Sala konferencyjna", iconClass: "ico22" },
-    ];
-
+    window.appData = {
+        thumbnails: {
+            urlSm: '@Thumbnail.Uri(Thumbnail.Small, "")',
+            urlXl: '@Thumbnail.Uri(Thumbnail.ExtraLarge, "")',
+            urlXxl: '@Thumbnail.Uri(Thumbnail.Mega, "")',
+        },
+        photosUrl: '@Vacation24.Core.Configuration.Images.ImagesConfiguration.PhotosUrl',
+        placeOptionsDefinition: [
+            { modelName: "Barbeque", title: "Grill", iconClass: "ico1" },
+            { modelName: "Shower", title: "Łazienka", iconClass: "ico2" },
+            { modelName: "Tv", title: "Telewizor", iconClass: "ico3" },
+            { modelName: "Internet", title: "Internet", iconClass: "ico4" },
+            { modelName: "Kitchen", title: "Kuchnia", iconClass: "ico5" },
+            { modelName: "Parking", title: "Parking", iconClass: "ico6" },
+            { modelName: "Food", title: "Wyżywienie", iconClass: "ico7" },
+            { modelName: "Bicycles", title: "Wypożyczalnia rowerów", iconClass: "ico8" },
+            { modelName: "Disableds", title: "Obiekt przystosowany dla osób niepełnosprawnych", iconClass: "ico9" },
+            { modelName: "Pets", title: "Akceptujemy zwierzęta domowe", iconClass: "ico10" },
+            { modelName: "Radio", title: "Radio", iconClass: "ico11" },
+            { modelName: "Playground", title: "Plac zabaw dla dzieci", iconClass: "ico12" },
+            { modelName: "PaymentCards", title: "Akceptujemy karty płatnicze", iconClass: "ico13" },
+            { modelName: "Kettle", title: "Czajnik", iconClass: "ico14" },
+            { modelName: "Garden", title: "Ogród wypoczynkowy", iconClass: "ico15" },
+            { modelName: "Fenced", title: "Teren ogrodzony", iconClass: "ico16" },
+            { modelName: "Sauna", title: "Sauna", iconClass: "ico17" },
+            { modelName: "Pool", title: "Basen", iconClass: "ico18" },
+            { modelName: "AirConditioning", title: "Klimatyzacja", iconClass: "ico19" },
+            { modelName: "Fitness", title: "Fitness", iconClass: "ico20" },
+            { modelName: "Ski", title: "Wypożyczalnia nart", iconClass: "ico21" },
+            { modelName: "ConnferenceRoom", title: "Sala konferencyjna", iconClass: "ico22" },
+        ]
+    }
+    /*
     var TextEditorButtons = [
         'bold',
         'italic',
@@ -53,4 +55,5 @@
         'fontFamily',
         'fontFormat',
     ];
+    */
 </script>

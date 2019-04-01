@@ -39,7 +39,21 @@
         <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&language=pl-PL.js"></script>
     </head>
     <body>
-        <div id="wnd_modal"></div>
+        <div id="wnd-modal" aria-hidden="true">
+            <div tabindex="-1" data-micromodal-close>
+                <div role="dialog" aria-modal="true" aria-labelledby="wnd-modal-title">
+                    <header>
+                        <h2 id="wnd-modal-title">
+                        </h2>
+
+                        <button aria-label="Close modal" data-micromodal-close></button>
+                    </header>
+                    <div id="wnd-modal-content">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="ajax_loader">
             <img src="@Url.Content("~/Images/ajax.gif")" alt="Ajax Loader" />
         </div>

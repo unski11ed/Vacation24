@@ -1,0 +1,33 @@
+{
+  "name": "vacation24",
+  "version": "0.1.0",
+  "description": "Service for promoting resorts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unski11ed/Vacation24.git"
+  },
+  "keywords": [
+    "demo",
+    "dotnetcore",
+    "jquery",
+    "promotion"
+  ],
+  "author": "Maciej Kurbański",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/unski11ed/Vacation24/issues"
+  },
+  "homepage": "https://github.com/unski11ed/Vacation24#readme",
+  "dependencies": {
+    "jquery": "^3.3.1",
+    "js-cookie": "^2.2.0",
+    "jsviews": "^1.0.2",
+    "micromodal": "^0.3.2",
+    "query-string": "^6.4.2",
+    "toastr": "^2.1.4"
+  }
+}
