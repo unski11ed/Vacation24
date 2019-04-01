@@ -53,6 +53,11 @@ namespace Vacation24.Core.Configuration
         public string PublicKey { get; set; }
     }
 
+    public class ApiKeys
+    {
+        public string GoogleMap { get; set; }
+    }
+
     public class AppConfiguration
     {
         public string SqliteDatabaseFile { get; set; }
@@ -61,6 +66,7 @@ namespace Vacation24.Core.Configuration
         public RecaptchaConfiguration RecaptchaConfiguration { get; set; }
         public MailConfiguration MailingConfiguration { get; set; }
         public MailSubjects MailSubjects { get; set; }
+        public ApiKeys ApiKeys { get; set; }
 
         public AppConfiguration(IConfiguration configuration) {
             this.SiteConfiguration = configuration.GetSection("SiteConfiguration") as SiteConfiguration;
@@ -68,6 +74,7 @@ namespace Vacation24.Core.Configuration
             this.RecaptchaConfiguration = configuration.GetSection("RecaptchaConfiguration") as RecaptchaConfiguration;
             this.MailingConfiguration = configuration.GetSection("MailConfiguration") as MailConfiguration;
             this.MailSubjects = configuration.GetSection("MailSubjects") as MailSubjects;
+            this.ApiKeys = configuration.GetSection("ApiKeys") as ApiKeys;
         }
     }
 }

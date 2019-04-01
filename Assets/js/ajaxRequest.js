@@ -34,6 +34,6 @@ function createAjaxLoader(loadingElementSelector) {
     }
 }
 
-var ajaxLoader = createAjaxLoader(AJAX_LOADER_ELEMENT);
+var ajaxRequest = createAjaxLoader(AJAX_LOADER_ELEMENT);
 
-export { ajaxLoader };
+export { ajaxRequest };

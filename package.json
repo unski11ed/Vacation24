@@ -23,6 +23,9 @@
   },
   "homepage": "https://github.com/unski11ed/Vacation24#readme",
   "dependencies": {
+    "dayjs": "^1.8.11",
+    "events": "^3.0.0",
+    "google-maps": "^3.3.0",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
     "jsviews": "^1.0.2",

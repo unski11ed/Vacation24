@@ -1,4 +1,6 @@
-﻿@using Vacation24.Core.Configuration.Images;
+@using Vacation24.Core.Configuration.Images;
+
+@model Vacation24.Core.Configuration.AppConfiguration;
 
 <script type="text/javascript">
     window.appData = {
@@ -7,7 +9,7 @@
             urlXl: '@Thumbnail.Uri(Thumbnail.ExtraLarge, "")',
             urlXxl: '@Thumbnail.Uri(Thumbnail.Mega, "")',
         },
-        photosUrl: '@Vacation24.Core.Configuration.Images.ImagesConfiguration.PhotosUrl',
+        photosUrl: '@ImagesConfiguration.PhotosUrl',
         placeOptionsDefinition: [
             { modelName: "Barbeque", title: "Grill", iconClass: "ico1" },
             { modelName: "Shower", title: "Łazienka", iconClass: "ico2" },
@@ -31,29 +33,9 @@
             { modelName: "Fitness", title: "Fitness", iconClass: "ico20" },
             { modelName: "Ski", title: "Wypożyczalnia nart", iconClass: "ico21" },
             { modelName: "ConnferenceRoom", title: "Sala konferencyjna", iconClass: "ico22" },
-        ]
+        ],
+        googleMaps: {
+            apiKey: Model.ApiKeys.GoogleMaps,
+        }
     }
-    /*
-    var TextEditorButtons = [
-        'bold',
-        'italic',
-        'underline',
-        'left',
-        'center',
-        'right',
-        'justify',
-        'ol',
-        'ul',
-        'strikethrough',
-        'removeformat',
-        'indent',
-        'outdent',
-        'hr',
-        'forecolor',
-        'bgcolor',
-        'fontSize',
-        'fontFamily',
-        'fontFormat',
-    ];
-    */
 </script>
