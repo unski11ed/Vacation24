@@ -1,22 +1,12 @@
-/*
-DOM elements:
-
-data-images-add-input="other"
-data-images-add-trigger="other"
-data-images-add-input="main"
-data-images-add-trigger="main"
-data-images-gallery
-*/
 import $ from 'jquery';
+import urlJoin from 'proper-url-join';
+import plupload from 'plupload';
 
 import { ajaxRequest } from './ajaxRequest';
 import { notification } from './notification';
 import { ResultType } from './consts';
 
 export function imagesEditorInitialise(placeId, $objectContainer) {
-    
-
-    var _placeId = placeId;
     var _this = this;
 
     function createUploader($button, $container, isMain) {
@@ -27,14 +17,12 @@ export function imagesEditorInitialise(placeId, $objectContainer) {
             browse_button: $button[0],
             container: $container[0],
             url: '/Photos/Add?isMain='+isMain.toString()+'&placeId=' + placeId,
-            flash_swf_url: '/Scripts/plupload/Moxie.swf',
-            silverlight_xap_url: '/Scripts/plupload/Moxie.xap',
             multi_selection: !isMain,
 
             filters: {
                 max_file_size: '10mb',
                 mime_types: [
-                    { title: "Obrazy", extensions: "jpg,png" },
+                    { title: "Images", extensions: "jpg,png" },
                 ]
             },
 
@@ -58,16 +46,16 @@ export function imagesEditorInitialise(placeId, $objectContainer) {
         return uploader;
     }
 
-    var $containerMainImage = $container.find('[data-images-main-image]')
-    var $containerGallery = $container.find('[data-images-gallery]');
+    var $containerMainImage = $objectContainer.find('[data-images-main-image]')
+    var $containerGallery = $objectContainer.find('[data-images-gallery]');
     var galleryUploader = createUploader(
-        $container.find('[data-images-add-trigger="other"]'),
-        $container.find('[data-images-add-input="other"]'),
+        $objectContainer.find('[data-images-add-trigger="other"]'),
+        $objectContainer.find('[data-images-add-input="other"]'),
         false
     );
     var mainPhotoUploader = createUploader(
-        $container.find('[data-images-add-trigger="main"]'),
-        $container.find('[data-images-add-input="other"]'),
+        $objectContainer.find('[data-images-add-trigger="main"]'),
+        $objectContainer.find('[data-images-add-input="other"]'),
         true
     );
 
@@ -100,23 +88,25 @@ export function imagesEditorInitialise(placeId, $objectContainer) {
     return {
         loadThumbnails: function() {
             var getThumbnailsUrlBase = window.appData.photos.urls.getThumbnails;
-            ajax(getThumbnailsUrlBase + "?objectId=" + _placeId, {}, function (list) {
+            ajaxRequest(getThumbnailsUrlBase + "?objectId=" + placeId, {}, function (list) {
                 var template = $.templates("#newPhotoThumbnail");
                 var megaImageUrlBase = window.appData.photos.thumbnails.urlMega;
 
                 $containerGallery.empty();
                 
                 list.forEach(function (image) {
+                    // If main image ...
                     if (image.Type === 0) {
+                        var imageUrl = urlJoin(megaImageUrlBase, image.Filename);
                         $containerMainImage
                             .empty()
                             .append(
-                                '<img src="' + megaImageUrlBase + '/' + image.Filename + '" />'
+                                '<img src="' + imageUrl + '" />'
                             );
                     } else {
                         var html = template.render({
-                            photoUrl: PHOTOS_URL + '/' + image.Filename,
-                            thumbnailUrl: THUMBNAILS_SMALL + image.Filename,
+                            photoUrl: urlJoin(PHOTOS_URL, image.Filename),
+                            thumbnailUrl: urlJoin(THUMBNAILS_SMALL, image.Filename),
                             photoId: image.Id
                         });
                         $container.append(html);
@@ -125,7 +115,7 @@ export function imagesEditorInitialise(placeId, $objectContainer) {
     
                 assignThumbnailEvents();
             }, function () {
-                Message.Error("Nie udało się pobrać listy zdjęć. Spróbuj jeszcze raz.");
+                notification.error("Failed to fetch images list, try again later.");
             });
         }
     }

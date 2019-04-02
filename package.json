@@ -31,6 +31,7 @@
     "jsviews": "^1.0.2",
     "micromodal": "^0.3.2",
     "plupload": "^2.3.6",
+    "proper-url-join": "^2.0.1",
     "query-string": "^6.4.2",
     "toastr": "^2.1.4"
   }
