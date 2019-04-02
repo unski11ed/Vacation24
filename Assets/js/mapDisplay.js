@@ -1,7 +1,7 @@
 import googleMapProvider from 'google-maps';
 
 export function displayMap($container, lattitude, longitude) {
-    googleMapProvider.KEY = appData.googleMaps.apiKey;
+    googleMapProvider.KEY = window.appData.googleMaps.apiKey;
     googleMapProvider.load(function(google) {
         var directionsDisplay = new google.maps.DirectionsRenderer();
 
@@ -29,7 +29,7 @@ export function displayMap($container, lattitude, longitude) {
         }
 
         //Create map
-        var map = new google.maps.Map($(".map_go")[0], myOptions);
+        var map = new google.maps.Map($container[0], myOptions);
         directionsDisplay.setMap(map);
         map.mapTypes.set('hide_street_names', hideLabels);
 
