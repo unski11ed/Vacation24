@@ -4,12 +4,19 @@
 
 <script type="text/javascript">
     window.appData = {
-        thumbnails: {
-            urlSm: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Small, "")',
-            urlXl: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.ExtraLarge, "")',
-            urlXxl: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Mega, "")',
-        },
-        photosUrl: '@Model.AppConfig.ImagesConfiguration.PhotosUrl',
+        photos: {
+            thumbnails: {
+                urlSm: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Small, "")',
+                urlXl: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.ExtraLarge, "")',
+                urlMega: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Mega, "")',
+            },
+            urls: {
+                source: '@Model.AppConfig.ImagesConfiguration.PhotosUrl',
+                upload: '@Model.AppConfig.ImagesConfiguration.UploadUrl',
+                remove: '@Model.AppConfig.ImagesConfiguration.DeleteUrl',
+                getThumbnails: '@Model.AppConfig.ImagesConfiguration.GetThumbnailsUrl'
+            }
+        }
         placeOptionsDefinition: [
             { modelName: "Barbeque", title: "Grill", iconClass: "ico1" },
             { modelName: "Shower", title: "Łazienka", iconClass: "ico2" },

@@ -25,6 +25,8 @@ namespace Vacation24.Core.Configuration
         public string PhotosPath { get; set; }
         public string ThumbnailPath { get; set; }
         public string UploadUrl { get; set; }
+        public string DeleteUrl { get; set; }
+        public string GetThumbnailsUrl { get; set; }
         public string PhotosUrl { get; set; }
         public string ThumbnailUrl { get; set; }
 
