@@ -13,21 +13,28 @@ using System.IO;
 using Vacation24.Core;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using Vacation24.Core.Configuration;
 
 namespace Vacation24.Controllers
 {
     public class PhotosController : CustomController
     {
         private readonly DefaultContext dbContext;
-        private readonly CurrentUserProvider currentUserProvider;
+        private readonly ICurrentUserProvider currentUserProvider;
+        private readonly ThumbnailConfig thumbnailConfig;
+        private readonly ImagesConfiguration imagesConfiguration;
 
         public PhotosController(
             DefaultContext dbContext,
-            CurrentUserProvider currentUserProvider
+            ICurrentUserProvider currentUserProvider,
+            ThumbnailConfig thumbnailConfig,
+            AppConfiguration appConfiguration
         )
         {
             this.dbContext = dbContext;
             this.currentUserProvider = currentUserProvider;
+            this.thumbnailConfig = thumbnailConfig;
+            this.imagesConfiguration = appConfiguration.ImagesConfiguration;
         }
 
         public ActionResult GetThumbnails(int objectId)
@@ -76,7 +83,7 @@ namespace Vacation24.Controllers
                 {
                     using(var fileStream = file.OpenReadStream()) {
                         //Generate thumbnails
-                        var thumbnails = Thumbnail.Sizes
+                        var thumbnails = thumbnailConfig.Sizes
                             .Select(
                                 size => new
                                     {
@@ -88,8 +95,8 @@ namespace Vacation24.Controllers
                         //Resize image itself
                         var resizedImage = ImageResizer.Resize(
                             fileStream,
-                            ImagesConfiguration.PhotoMaxWidth,
-                            ImagesConfiguration.PhotoMaxWidth
+                            imagesConfiguration.PhotoMaxWidth,
+                            imagesConfiguration.PhotoMaxWidth
                         );
 
                         // Generate image filename
@@ -108,7 +115,7 @@ namespace Vacation24.Controllers
                             {
                                 // Delete thumbnails and the photo itself
                                 var filePath = Path.Combine(
-                                    ImagesConfiguration.PhotosPath,
+                                    imagesConfiguration.PhotosPath,
                                     currentMainPhoto.Filename
                                 );
                                 System.IO.File.Delete(filePath);
@@ -122,7 +129,7 @@ namespace Vacation24.Controllers
                         {
                             foreach (var thumbnail in thumbnails)
                             {
-                                var path = Thumbnail.Path(thumbnail.size, fileName);
+                                var path = thumbnailConfig.Path(thumbnail.size, fileName);
                                 // Create directory if not existing
                                 (new FileInfo(path)).Directory.Create();
                                 // Save each thumbnail
@@ -180,7 +187,7 @@ namespace Vacation24.Controllers
 
             //Delete thumbnail and actual photo
             var filePath = Path.Combine(
-                ImagesConfiguration.PhotosPath,
+                imagesConfiguration.PhotosPath,
                 photo.Filename
             );
             deleteAllThumbnails(photo.Filename);
@@ -194,9 +201,9 @@ namespace Vacation24.Controllers
 
         private void deleteAllThumbnails(string fileName)
         {
-            Thumbnail.Sizes.ForEach((size) =>
+            thumbnailConfig.Sizes.ForEach((size) =>
             {
-                System.IO.File.Delete(Thumbnail.Path(size, fileName));
+                System.IO.File.Delete(thumbnailConfig.Path(size, fileName));
             });
         }
     }

@@ -1,15 +1,15 @@
 @using Vacation24.Core.Configuration.Images;
 
-@model Vacation24.Core.Configuration.AppConfiguration;
+@model Vacation24.Components.JsDataProvider;
 
 <script type="text/javascript">
     window.appData = {
         thumbnails: {
-            urlSm: '@Thumbnail.Uri(Thumbnail.Small, "")',
-            urlXl: '@Thumbnail.Uri(Thumbnail.ExtraLarge, "")',
-            urlXxl: '@Thumbnail.Uri(Thumbnail.Mega, "")',
+            urlSm: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Small, "")',
+            urlXl: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.ExtraLarge, "")',
+            urlXxl: '@Model.ThumbnailConfig.Uri(Model.ThumbnailConfig.Mega, "")',
         },
-        photosUrl: '@ImagesConfiguration.PhotosUrl',
+        photosUrl: '@Model.AppConfig.ImagesConfiguration.PhotosUrl',
         placeOptionsDefinition: [
             { modelName: "Barbeque", title: "Grill", iconClass: "ico1" },
             { modelName: "Shower", title: "Łazienka", iconClass: "ico2" },
@@ -35,7 +35,7 @@
             { modelName: "ConnferenceRoom", title: "Sala konferencyjna", iconClass: "ico22" },
         ],
         googleMaps: {
-            apiKey: Model.ApiKeys.GoogleMaps,
+            apiKey: Model.AppConfig.ApiKeys.GoogleMaps,
         }
     }
 </script>

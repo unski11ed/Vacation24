@@ -13,10 +13,15 @@ namespace Vacation24.Controllers
     public class StashController : Controller
     {
         private readonly DefaultContext dbContext;
+        private readonly ThumbnailConfig thumbnailConfig;
 
-        public StashController(DefaultContext dbContext)
+        public StashController(
+            DefaultContext dbContext,
+            ThumbnailConfig thumbnailConfig
+        )
         {
             this.dbContext = dbContext;
+            this.thumbnailConfig = thumbnailConfig;
         }
 
         public ActionResult GetList(RequestStashList ids)
@@ -59,7 +64,10 @@ namespace Vacation24.Controllers
                 .Select(p => p.Filename)
                 .FirstOrDefault();
 
-            placeDynamic.ThumbnailSmall = Thumbnail.Uri(Thumbnail.Small, placePhotoFilename);
+            placeDynamic.ThumbnailSmall = thumbnailConfig.Uri(
+                thumbnailConfig.Small,
+                placePhotoFilename
+            );
 
             return Content(
                 JsonConvert.SerializeObject(

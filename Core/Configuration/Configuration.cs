@@ -3,12 +3,32 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Web;
 
 namespace Vacation24.Core.Configuration
 {
+    public class ThumbnailSizes {
+        public Size Small { get; set; }
+        public Size Medium { get; set; }
+        public Size Large { get; set; }
+        public Size ExtraLarge { get;set; }
+        public Size Mega { get; set; }
+    }
+    public class ImagesConfiguration
+    {
+        public int PhotoMaxWidth { get; set; }
+        public int PhotoMaxHeight { get; set; }
+        public ThumbnailSizes ThumbnailSizes { get; set;}
+        public string PhotosPath { get; set; }
+        public string ThumbnailPath { get; set; }
+        public string UploadUrl { get; set; }
+        public string PhotosUrl { get; set; }
+        public string ThumbnailUrl { get; set; }
+
+    }
     public class MailConfiguration
     {
         public string Name { get; set; }
@@ -61,6 +81,7 @@ namespace Vacation24.Core.Configuration
     public class AppConfiguration
     {
         public string SqliteDatabaseFile { get; set; }
+        public ImagesConfiguration ImagesConfiguration { get; set; }
         public SiteConfiguration SiteConfiguration { get; set; }
         public PayUConfiguration PayUConfiguration { get; set; }
         public RecaptchaConfiguration RecaptchaConfiguration { get; set; }
@@ -70,6 +91,7 @@ namespace Vacation24.Core.Configuration
 
         public AppConfiguration(IConfiguration configuration) {
             this.SiteConfiguration = configuration.GetSection("SiteConfiguration") as SiteConfiguration;
+            this.ImagesConfiguration = configuration.GetSection("ImagesConfiguration") as ImagesConfiguration;
             this.PayUConfiguration = configuration.GetSection("PayUConfiguration") as PayUConfiguration;
             this.RecaptchaConfiguration = configuration.GetSection("RecaptchaConfiguration") as RecaptchaConfiguration;
             this.MailingConfiguration = configuration.GetSection("MailConfiguration") as MailConfiguration;

@@ -19,6 +19,7 @@ using Rotativa.AspNetCore;
 using StructureMap;
 using Vacation24.Core;
 using Vacation24.Core.Configuration;
+using Vacation24.Core.Configuration.Images;
 using Vacation24.Core.Mailer.Concrete;
 using Vacation24.Core.Payment;
 using Vacation24.Middleware;
@@ -55,6 +56,7 @@ namespace Vacation24
 
             // Configure DependencyInjection
             services.AddSingleton<AppConfiguration>((serviceProvider) => new AppConfiguration(Configuration));
+            services.AddSingleton<ThumbnailConfig, ThumbnailConfig>();
 
             services.AddScoped<IActivationMail, ActivationMail>();
             services.AddScoped<IContactFormMail, ContactFormMail>();
