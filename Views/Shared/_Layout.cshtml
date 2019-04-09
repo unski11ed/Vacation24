@@ -8,7 +8,7 @@
         @Html.Partial("~/Views/Shared/_ModalTemplates.cshtml")
         @Html.Partial("~/Views/Shared/_ScriptsData.cshtml")
 
-        @await Component.InvokeAsync(nameof(AppData))
+        @await Component.InvokeAsync(nameof(AppDataViewComponent))
         
         @Scripts.Render("~/bundles/main_scripts")
 
